@@ -1,10 +1,10 @@
 networks:
-  biblioteca-network:
+  library-network:
     driver: bridge
 
-networks:
-  biblioteca-network:
-    driver: bridge
+volumes:
+  mysql-data:
+  mysql-config:
 
 services:
   mysql-db:
@@ -23,9 +23,32 @@ services:
       - mysql-config:/etc/mysql/conf.d
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - biblioteca-network
+      - library-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 10s
       retries: 5
     command: --default-authentication-plugin=mysql_native_password
+  
+  book-service:
+    build:
+      context: ./book
+      dockerfile: Dockerfile
+    container_name: book-app
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@mysql-db:3306/${DB_NAME}
+      - SERVICE_NAME=book-service
+      - PORT=5001
+    ports:
+      - "5001:5001"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
