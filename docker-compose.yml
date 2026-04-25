@@ -9,8 +9,10 @@ volumes:
 services:
   mysql-db:
     image: mysql:8.0
-    container_name: biblioteca-mysql
+    container_name: library-mysql
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
@@ -25,7 +27,7 @@ services:
     networks:
       - library-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
       timeout: 10s
       retries: 5
     command: --default-authentication-plugin=mysql_native_password
@@ -36,6 +38,8 @@ services:
       dockerfile: Dockerfile
     container_name: book-app
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@mysql-db:3306/${DB_NAME}
       - SERVICE_NAME=book-service
@@ -49,6 +53,81 @@ services:
       - library-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  security-service:
+    build:
+      context: ./security
+      dockerfile: Dockerfile
+    container_name: security-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@mysql-db:3306/${DB_NAME}
+      - SERVICE_NAME=security-service
+      - PORT=5002
+    ports:
+      - "5002:5002"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  
+  loan-service:
+    build:
+      context: ./loan
+      dockerfile: Dockerfile
+    container_name: loan-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@mysql-db:3306/${DB_NAME}
+      - SERVICE_NAME=loan-service
+      - PORT=5003
+    ports:
+      - "5003:5003"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  report-service:
+    build:
+      context: ./reports
+      dockerfile: Dockerfile
+    container_name: report-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@mysql-db:3306/${DB_NAME}
+      - SERVICE_NAME=report-service
+      - PORT=5004
+    ports:
+      - "5004:5004"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
       interval: 30s
       timeout: 5s
       retries: 3
