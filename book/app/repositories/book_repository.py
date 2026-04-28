@@ -1,5 +1,6 @@
 from app import db
 from app.models.book import Book
+
 class BookRepository:
     @staticmethod
     def get_all_books():
@@ -10,31 +11,30 @@ class BookRepository:
         return Book.query.get(book_id)
 
     @staticmethod
-    def create_book(isbn, titel, publication_date, stock, id_author, id_editorial):
+    def create_book(book):
         try:
-            new_book = Book(isbn=isbn, titel=titel, publication_date=publication_date, stock=stock, id_author=id_author, id_editorial=id_editorial)
-            db.session.add(new_book)
+            db.session.add(book)
             db.session.commit()
-            return new_book
+            return book
         except Exception as e:
             db.session.rollback()
             raise e
 
     @staticmethod
-    def update_book(book_id, isbn=None, titel=None, publication_date=None, stock=None, id_author=None, id_editorial=None):
+    def update_book(bookUpdate):
         try:
-            book = Book.query.get(book_id)
+            book = Book.query.get(bookUpdate.book_id)
             if book:
-                if titel is not None:
-                    book.titel = titel
-                if publication_date is not None:
-                    book.publication_date = publication_date
-                if stock is not None:
-                    book.stock = stock
-                if id_author is not None:
-                    book.id_author = id_author
-                if id_editorial is not None:
-                    book.id_editorial = id_editorial
+                if bookUpdate.title is not None:
+                    book.title = bookUpdate.title
+                if bookUpdate.publication_date is not None:
+                    book.publication_date = bookUpdate.publication_date
+                if bookUpdate.stock is not None:
+                    book.stock = bookUpdate.stock
+                if bookUpdate.id_author is not None:
+                    book.id_author = bookUpdate.id_author
+                if bookUpdate.id_editorial is not None:
+                    book.id_editorial = bookUpdate.id_editorial
                 db.session.commit()
             return book
         except Exception as e:

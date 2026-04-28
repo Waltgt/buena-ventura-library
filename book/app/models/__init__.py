@@ -1,5 +1,5 @@
-from .author import Autor
+from .author import Author
 from .editorial import Editorial
 from .book import Book
 
-__all__ = ['Autor', 'Editorial', 'Book']
+__all__ = ['Author', 'Editorial', 'Book']

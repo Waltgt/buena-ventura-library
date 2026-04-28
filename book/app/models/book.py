@@ -6,7 +6,7 @@ class Book(db.Model):
 
     id_book = db.Column('id_libro',db.BigInteger, primary_key=True, autoincrement=True)
     isbn = db.Column('isbn',db.String(60), nullable=False, unique=True)
-    titel = db.Column('titulo',db.String(100), nullable=False)
+    title = db.Column('titulo',db.String(100), nullable=False)
     publication_date = db.Column('fecha_publicacion',db.Date, nullable=False)
     stock = db.Column('cantidad_disponible',db.Integer, nullable=False)
 
