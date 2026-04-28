@@ -44,8 +44,12 @@ services:
       - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@mysql-db:3306/${DB_NAME}
       - SERVICE_NAME=book-service
       - PORT=5001
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
     ports:
       - "5001:5001"
+    volumes:
+      - ./book:/app
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -71,6 +75,8 @@ services:
       - PORT=5002
     ports:
       - "5002:5002"
+    volumes:
+      - ./security:/app
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -81,31 +87,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-  
-  loan-service:
-    build:
-      context: ./loan
-      dockerfile: Dockerfile
-    container_name: loan-app
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@mysql-db:3306/${DB_NAME}
-      - SERVICE_NAME=loan-service
-      - PORT=5003
-    ports:
-      - "5003:5003"
-    depends_on:
-      mysql-db:
-        condition: service_healthy
-    networks:
-      - library-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+
 
   report-service:
     build:
@@ -121,6 +103,8 @@ services:
       - PORT=5004
     ports:
       - "5004:5004"
+    volumes:
+      - ./reports:/app
     depends_on:
       mysql-db:
         condition: service_healthy
