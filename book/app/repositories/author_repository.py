@@ -2,6 +2,7 @@ from app import db
 from app.models.author import Author
 
 class AuthorRepository:
+    
     @staticmethod
     def get_all_authors():
         return Author.query.all()

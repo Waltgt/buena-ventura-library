@@ -11,6 +11,10 @@ class BookRepository:
         return Book.query.get(book_id)
 
     @staticmethod
+    def get_book_by_isbn(isbn):
+        return Book.query.filter_by(isbn=isbn).first()
+    
+    @staticmethod
     def create_book(book):
         try:
             db.session.add(book)

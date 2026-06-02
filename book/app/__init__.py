@@ -14,6 +14,21 @@ def create_app():
 
     db.init_app(app)
     CORS(app)
+    
+    from app.routes.book_route import book_bp
+    from app.routes.user_route import user_bp
+    app.register_blueprint(book_bp)
+    app.register_blueprint(user_bp)
+    
+    
+    
+    print("\n" + "="*50)
+    print("RUTAS REGISTRADAS EN LA APLICACIÓN:")
+    print("="*50)
+    for rule in app.url_map.iter_rules():
+        print(f" {rule} - Methods: {rule.methods}")
+    print("="*50 + "\n")
+    
 
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):
@@ -60,7 +75,14 @@ def create_app():
             'timestamp': _get_current_timestamp()
         }), 400
     
+    @app.route('/health', methods=['GET'])
+    def health_check():
+        return jsonify({'status': 'ok'}), 200
+    
     def _get_current_timestamp():
         return datetime.utcnow().isoformat()
 
     return app
+
+    
+    

@@ -1,7 +1,13 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 from app.config.settings import DevelopmentConfig
+from logging import basicConfig, INFO
+import logging
+from datetime import datetime
+
+basicConfig(level=INFO)
 
 db = SQLAlchemy()
 
@@ -11,6 +17,10 @@ def create_app():
 
     db.init_app(app)
     CORS(app)
+    
+    from app.routes.user_route import user_bp
+    app.register_blueprint(user_bp, url_prefix='/api/user')
+    
 
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):
@@ -56,8 +66,17 @@ def create_app():
             'error_code': 'BAD_REQUEST',
             'timestamp': _get_current_timestamp()
         }), 400
+        
+        
+    @app.route('/health')
+    def health():
+        return jsonify({
+            'status': 'healthy',
+            'timestamp': _get_current_timestamp()
+        }), 200
     
     def _get_current_timestamp():
         return datetime.utcnow().isoformat()
 
     return app
+

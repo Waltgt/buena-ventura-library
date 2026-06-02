@@ -41,5 +41,5 @@ class User(db.Model):
             'phone_number': self.phone_number,
             'identification_number': self.identification_number,
             'id_rol': self.id_rol,
-            'rol_name': self.rol.name_rol if self.rol else None
+            'rol_name': self.rol.rol_name if self.rol else None
         }
