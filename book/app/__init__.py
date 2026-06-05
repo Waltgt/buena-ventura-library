@@ -4,6 +4,7 @@ from flask_cors import CORS
 from app.config.settings import DevelopmentConfig
 from werkzeug.exceptions import HTTPException
 from datetime import datetime
+from flasgger import Swagger
 import logging
 
 db = SQLAlchemy()
@@ -11,7 +12,13 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(DevelopmentConfig)
-
+    app.config['SWAGGER'] = {
+        'title': 'BuenaVentura API',
+        'uiversion': 3,
+        'version': '1.0.0',
+        'description': 'API del sistema de gestión de biblioteca BuenaVentura'
+    }
+    Swagger(app)
     db.init_app(app)
     CORS(app)
     

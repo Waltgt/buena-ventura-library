@@ -1,0 +1,21 @@
+tags:
+  - Users
+parameters:
+  - name: user_name
+    in: path
+    type: string
+    required: true
+    description: Nombre del usuario a validar
+responses:
+  200:
+    description: Usuario válido
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User is valid
+  400:
+    description: Rol no válido
+  404:
+    description: Usuario no encontrado
