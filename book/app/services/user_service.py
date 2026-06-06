@@ -60,12 +60,10 @@ class UserService:
         users = UserRepository.get_all_users()
         return users if users else []
 
-    def update_user(self, new_user, user_name):
-        UserUtils.validate_role(user_name, RolName.ADMIN.value)
+    def update_user(self, new_user):
         UserRepository.update_user(new_user)
 
-    def delete_user(self, user_id, user_name):
-        UserUtils.validate_role(user_name, RolName.ADMIN.value)
+    def delete_user(self, user_id):
         return UserRepository.delete_user(user_id)
     
     def validate_credential(self, user_name, valid_role):
@@ -98,3 +96,4 @@ class UserService:
             raise ValueError(f"El correo '{email}' no es válido")
         
         return True
+

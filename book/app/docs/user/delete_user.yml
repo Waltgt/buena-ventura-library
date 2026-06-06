@@ -1,0 +1,76 @@
+tags:
+  - Users
+summary: Elimina un usuario por su ID
+parameters:
+  - name: user_id
+    in: path
+    type: integer
+    required: true
+    description: ID del usuario a eliminar
+responses:
+  200:
+    description: Usuario eliminado exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Usuario jdoe eliminado exitosamente
+        data:
+          type: object
+          properties:
+            id_user:
+              type: integer
+              example: 1
+            username:
+              type: string
+              example: jdoe
+            customer_name:
+              type: string
+              example: John
+            customer_last_name:
+              type: string
+              example: Doe
+            email:
+              type: string
+              example: jdoe@mail.com
+            phone_number:
+              type: string
+              example: "50212345678"
+            identification_number:
+              type: string
+              example: "1234567890101"
+            id_rol:
+              type: integer
+              example: 1
+  404:
+    description: Usuario no encontrado
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: User not found
+  500:
+    description: Error interno del servidor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Internal server error
+        message:
+          type: string
+          example: An unexpected error occurred
+        error_type:
+          type: string
+          example: InternalError

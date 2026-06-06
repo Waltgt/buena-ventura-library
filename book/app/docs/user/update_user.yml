@@ -1,0 +1,106 @@
+tags:
+  - Users
+summary: Actualiza los datos de un usuario existente
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - id_user
+      properties:
+        id_user:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: jdoe_updated
+        password:
+          type: string
+          example: "newpassword123"
+        customer_name:
+          type: string
+          example: John
+        customer_last_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: jdoe_updated@mail.com
+        phone_number:
+          type: string
+          example: "50298765432"
+        identification_number:
+          type: string
+          example: "1234567890101"
+        id_rol:
+          type: integer
+          example: 2
+responses:
+  200:
+    description: Usuario actualizado exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Usuario actualizado exitosamente
+        data:
+          type: object
+          properties:
+            id_user:
+              type: integer
+              example: 1
+            username:
+              type: string
+              example: jdoe_updated
+            customer_name:
+              type: string
+              example: John
+            customer_last_name:
+              type: string
+              example: Doe
+            email:
+              type: string
+              example: jdoe_updated@mail.com
+            phone_number:
+              type: string
+              example: "50298765432"
+            identification_number:
+              type: string
+              example: "1234567890101"
+            id_rol:
+              type: integer
+              example: 2
+  400:
+    description: No se proporcionaron datos
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: No se proporcionaron datos
+  500:
+    description: Error interno del servidor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Internal server error
+        message:
+          type: string
+          example: An unexpected error occurred
+        error_type:
+          type: string
+          example: InternalError
