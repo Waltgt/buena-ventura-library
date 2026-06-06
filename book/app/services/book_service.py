@@ -60,8 +60,8 @@ class BookService:
             raise BadRequest("Title is required")
         if not book.publication_date:
             raise BadRequest("Publication date is required")
-        if book.stock is None or book.stock <= 0:
-            raise BadRequest("Stock is required and must be greater than 0")
+        if book.stock is None or book.stock < 0:
+            raise BadRequest("Stock is required and cannot be negative")
         if not book.id_author:
             raise BadRequest("Author ID is required")
         if not book.id_editorial:

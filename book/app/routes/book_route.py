@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.exceptions import BadRequest
 from app.services.book_service import BookService
+from app.utils.auth import roles_required
+from app.enums.rol_name import RolName
 
 book_bp = Blueprint('book', __name__, url_prefix='/api/book')
 
@@ -44,6 +46,7 @@ def get_all_books():
     }), 200
 
 @book_bp.route('', methods=['POST'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 def create_book():
     try:
         book_data = request.get_json()
@@ -75,6 +78,7 @@ def create_book():
         }), 500
 
 @book_bp.route('', methods=['PUT'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 def update_book():
     try:
         book_data = request.get_json()
@@ -106,6 +110,7 @@ def update_book():
         }), 500
 
 @book_bp.route('/<int:book_id>', methods=['DELETE'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 def delete_book(book_id):
     try:
         book_service = BookService()

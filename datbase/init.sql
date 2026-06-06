@@ -84,7 +84,7 @@ INSERT INTO estado_prestamo (codigo_estado_prestamo, descripcion_estado_prestamo
 
 INSERT INTO usuario (
     nombre_usuario, 
-    contraseña, 
+    contrasena, 
     nombre_cliente, 
     apellido_cliente, 
     correo, 

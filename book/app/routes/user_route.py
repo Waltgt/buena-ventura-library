@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from werkzeug.exceptions import BadRequest
 from app.services.user_service import UserService
 from app.enums.rol_name import RolName
+from app.utils.auth import roles_required
 from flasgger import swag_from
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
@@ -51,6 +52,7 @@ def find_user_by_username(username):
         }), 500
         
 @user_bp.route('/', methods=['POST'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/create_user.yml')
 def create_user():
     try:
@@ -86,6 +88,7 @@ def create_user():
         }), 500
 
 @user_bp.route('', methods=['PUT'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/update_user.yml')
 def update_user():
     try:
@@ -139,6 +142,7 @@ def get_all_users():
 
 
 @user_bp.route('/<int:user_id>', methods=['DELETE'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/delete_user.yml')
 def delete_user(user_id):
     try:

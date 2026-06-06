@@ -60,8 +60,16 @@ class UserService:
         users = UserRepository.get_all_users()
         return users if users else []
 
-    def update_user(self, new_user):
-        UserRepository.update_user(new_user)
+    def update_user(self, user_data):
+        if not user_data.get('id_user'):
+            raise BadRequest("El campo 'id_user' es obligatorio para actualizar")
+        self.validate_user_request(user_data)
+        user = self.map_user_data_to_user(user_data)
+        user.id_user = user_data.get('id_user')
+        updated_user = UserRepository.update_user(user)
+        if not updated_user:
+            raise NotFound("Usuario no encontrado")
+        return updated_user
 
     def delete_user(self, user_id):
         return UserRepository.delete_user(user_id)
@@ -93,7 +101,7 @@ class UserService:
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         
         if not re.match(email_regex, email):
-            raise ValueError(f"El correo '{email}' no es válido")
-        
+            raise BadRequest(f"El correo '{email}' no es válido")
+
         return True
 
