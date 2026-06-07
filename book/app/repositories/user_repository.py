@@ -18,10 +18,10 @@ class UserRepository:
 
     @staticmethod
     def create_user(user):
-        try: 
-        
+        try:
             db.session.add(user)
             db.session.commit()
+            return user
         except Exception as e:
             db.session.rollback()
             raise e

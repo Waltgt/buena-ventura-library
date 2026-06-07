@@ -1,0 +1,151 @@
+tags:
+  - Loans
+summary: Asigna un libro a un usuario (crea un préstamo)
+description: >
+  Solo usuarios con rol Gestor o Administrador. Requiere el header X-Username.
+  Reglas: el usuario no puede tener otro libro prestado activo, el libro no puede
+  estar asignado a otra persona el mismo día y debe haber ejemplares disponibles.
+parameters:
+  - name: X-Username
+    in: header
+    type: string
+    required: true
+    description: Usuario que realiza la petición (debe tener rol Gestor o Administrador)
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - id_book
+        - id_user_loan
+        - expected_return_date
+        - id_user_register
+      properties:
+        id_book:
+          type: integer
+          example: 1
+        id_user_loan:
+          type: integer
+          example: 2
+        expected_return_date:
+          type: string
+          example: "2026-06-20"
+        id_user_register:
+          type: integer
+          example: 1
+        delivery_date:
+          type: string
+          description: Opcional. Si no se envía, se usa la fecha actual.
+          example: "2026-06-06"
+responses:
+  201:
+    description: Préstamo creado exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            id_loan:
+              type: integer
+              example: 1
+            id_book:
+              type: integer
+              example: 1
+            book_title:
+              type: string
+              example: Cien años de soledad
+            isbn:
+              type: string
+              example: "978-3-16-148410-0"
+            id_user_loan:
+              type: integer
+              example: 2
+            user_loan_name:
+              type: string
+              example: John Doe
+            delivery_date:
+              type: string
+              example: "2026-06-06T00:00:00"
+            expected_return_date:
+              type: string
+              example: "2026-06-20T00:00:00"
+            real_return_date:
+              type: string
+              nullable: true
+              example: null
+            status_code:
+              type: string
+              example: ACT
+            id_user_register:
+              type: integer
+              example: 1
+        message:
+          type: string
+          example: Loan created successfully
+  400:
+    description: Violación de una regla de negocio o datos inválidos
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: El usuario ya tiene un libro prestado
+        message:
+          type: string
+          example: Validation error
+        error_type:
+          type: string
+          example: BadRequest
+  401:
+    description: Falta el header X-Username o el usuario no existe
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Authentication required
+        message:
+          type: string
+          example: "Falta el encabezado 'X-Username'"
+  403:
+    description: El usuario no tiene rol Gestor o Administrador
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Insufficient permissions
+        message:
+          type: string
+          example: Se requiere rol Gestor o Administrador
+  500:
+    description: Error interno del servidor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Internal server error
+        message:
+          type: string
+          example: An unexpected error occurred
+        error_type:
+          type: string
+          example: InternalError

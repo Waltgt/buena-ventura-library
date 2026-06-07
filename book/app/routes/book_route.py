@@ -3,10 +3,12 @@ from werkzeug.exceptions import BadRequest
 from app.services.book_service import BookService
 from app.utils.auth import roles_required
 from app.enums.rol_name import RolName
+from flasgger import swag_from
 
 book_bp = Blueprint('book', __name__, url_prefix='/api/book')
 
 @book_bp.route('/<int:book_id>', methods=['GET'])
+@swag_from('../docs/book/get_book_by_id.yml')
 def get_book_by_id(book_id):
     book_service = BookService()
     book = book_service.get_book_by_id(book_id)
@@ -26,6 +28,7 @@ def get_book_by_id(book_id):
         }), 200 
     
 @book_bp.route('', methods=['GET'])
+@swag_from('../docs/book/get_all_books.yml')
 def get_all_books():
     book_service = BookService()
     books = book_service.get_all_books()
@@ -47,6 +50,7 @@ def get_all_books():
 
 @book_bp.route('', methods=['POST'])
 @roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
+@swag_from('../docs/book/create_book.yml')
 def create_book():
     try:
         book_data = request.get_json()
@@ -79,6 +83,7 @@ def create_book():
 
 @book_bp.route('', methods=['PUT'])
 @roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
+@swag_from('../docs/book/update_book.yml')
 def update_book():
     try:
         book_data = request.get_json()
@@ -111,6 +116,7 @@ def update_book():
 
 @book_bp.route('/<int:book_id>', methods=['DELETE'])
 @roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
+@swag_from('../docs/book/delete_book.yml')
 def delete_book(book_id):
     try:
         book_service = BookService()

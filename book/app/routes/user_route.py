@@ -87,7 +87,7 @@ def create_user():
             'error_type': 'InternalError'
         }), 500
 
-@user_bp.route('', methods=['PUT'])
+@user_bp.route('/', methods=['PUT'])
 @roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/update_user.yml')
 def update_user():
@@ -115,7 +115,7 @@ def update_user():
             'error_type': 'InternalError'
         }), 500
 
-@user_bp.route('', methods=['GET'])
+@user_bp.route('/', methods=['GET'])
 @swag_from('../docs/user/get_all_users.yml')
 def get_all_users():
     try:

@@ -33,8 +33,7 @@ class BookService:
             raise BadRequest('Book creation failed: ' + str(e))
     
     def map_book_from_request(self, book_data):
-        return Book(
-            book_id=book_data.get('id_book') if book_data.get('id_book') else None,
+        book = Book(
             isbn=book_data.get('isbn'),
             title=book_data.get('title'),
             publication_date=datetime.strptime(book_data.get('publication_date'), '%Y-%m-%d').date() if book_data.get('publication_date') else None,
@@ -42,6 +41,10 @@ class BookService:
             id_author=book_data.get('id_author'),
             id_editorial=book_data.get('id_editorial')
         )
+        # En crear, id_book queda en None y MySQL lo genera (autoincrement).
+        # En actualizar, conserva el id que envia el frontend para ubicar la fila.
+        book.id_book = book_data.get('id_book')
+        return book
     
     def validate_isbn(self, book):
         if not book.isbn:
@@ -67,12 +70,18 @@ class BookService:
         if not book.id_editorial:
             raise BadRequest("Editorial ID is required")
         
-    def update_book(self, book_data):   
+    def update_book(self, book_data):
         try:
-            
             book = self.map_book_from_request(book_data)
+            if not book.id_book:
+                raise BadRequest("El campo 'id_book' es obligatorio para actualizar")
             self.validate_book(book)
-            return BookRepository.update_book(book)
+            updated_book = BookRepository.update_book(book)
+            if not updated_book:
+                raise BadRequest("El libro no existe")
+            return updated_book
+        except BadRequest:
+            raise
         except Exception as e:
             current_app.logger.error(f'Error updating book: {str(e)}')
             raise BadRequest('Book update failed: ' + str(e))

@@ -27,7 +27,7 @@ class User(db.Model):
     
     def to_dict(self):
         return {
-            #'id_user': self.id_user,
+            'id_user': self.id_user or None,
             'username': self.username,
             'customer_name': self.customer_name,
             'customer_last_name': self.customer_last_name,

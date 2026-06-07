@@ -27,7 +27,7 @@ class BookRepository:
     @staticmethod
     def update_book(bookUpdate):
         try:
-            book = Book.query.get(bookUpdate.book_id)
+            book = Book.query.get(bookUpdate.id_book)
             if book:
                 if bookUpdate.title is not None:
                     book.title = bookUpdate.title

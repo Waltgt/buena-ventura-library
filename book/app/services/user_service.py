@@ -19,9 +19,7 @@ class UserService:
             return []
         return user
     
-    def create_user(self, user_data):
-        #UserUtils.validate_role(user_name, RolName.ADMIN.value)
-        
+    def create_user(self, user_data):        
         self.validate_user_request(user_data)
         user = self.map_user_data_to_user(user_data)
         

@@ -1,0 +1,118 @@
+tags:
+  - Reports
+summary: Reporte de préstamos con filtros de búsqueda
+description: >
+  Solo usuarios con rol Administrador. Requiere el header X-Username.
+  Permite buscar por ISBN, título del libro o nombre del usuario.
+  Si no se envía ningún filtro, devuelve el historial completo.
+parameters:
+  - name: X-Username
+    in: header
+    type: string
+    required: true
+    description: Usuario que realiza la petición (debe tener rol Administrador)
+  - name: isbn
+    in: query
+    type: string
+    required: false
+    description: Filtra por el ISBN del libro
+  - name: title
+    in: query
+    type: string
+    required: false
+    description: Filtra por coincidencia en el título del libro
+  - name: user
+    in: query
+    type: string
+    required: false
+    description: Filtra por nombre o apellido del usuario
+responses:
+  200:
+    description: Reporte generado exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id_loan:
+                type: integer
+                example: 1
+              book_title:
+                type: string
+                example: Cien años de soledad
+              isbn:
+                type: string
+                example: "978-3-16-148410-0"
+              user_loan_name:
+                type: string
+                example: John Doe
+              delivery_date:
+                type: string
+                example: "2026-06-06T00:00:00"
+              expected_return_date:
+                type: string
+                example: "2026-06-20T00:00:00"
+              real_return_date:
+                type: string
+                nullable: true
+                example: null
+              status_code:
+                type: string
+                example: ACT
+        count:
+          type: integer
+          example: 2
+        message:
+          type: string
+          example: Report generated successfully
+  401:
+    description: Falta el header X-Username o el usuario no existe
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Authentication required
+        message:
+          type: string
+          example: "Falta el encabezado 'X-Username'"
+  403:
+    description: El usuario no tiene rol Administrador
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Insufficient permissions
+        message:
+          type: string
+          example: Se requiere rol Gestor o Administrador
+  500:
+    description: Error interno del servidor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Internal server error
+        message:
+          type: string
+          example: An unexpected error occurred
+        error_type:
+          type: string
+          example: InternalError
