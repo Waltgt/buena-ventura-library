@@ -1,5 +1,4 @@
 from app import db
-from sqlalchemy import CheckConstraint
 
 class User(db.Model):
     __tablename__ = 'usuario'
@@ -15,12 +14,7 @@ class User(db.Model):
     
     id_rol = db.Column('id_rol',db.ForeignKey('rol.id_rol'), nullable=False)
     rol = db.relationship('Rol')
-    
 
-    __table_args__ = (
-        CheckConstraint("id_role IN ('admin', 'user')", name='check_role_valid'),
-    )
-    
     def __init__(self, username, password, customer_name, customer_last_name, email, phone_number, identification_number, id_rol):
         self.username = username
         self.password = password
@@ -33,7 +27,7 @@ class User(db.Model):
     
     def to_dict(self):
         return {
-            #'id_user': self.id_user,
+            'id_user': self.id_user or None,
             'username': self.username,
             'customer_name': self.customer_name,
             'customer_last_name': self.customer_last_name,

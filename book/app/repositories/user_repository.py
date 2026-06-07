@@ -18,10 +18,10 @@ class UserRepository:
 
     @staticmethod
     def create_user(user):
-        try: 
-        
+        try:
             db.session.add(user)
             db.session.commit()
+            return user
         except Exception as e:
             db.session.rollback()
             raise e
@@ -51,24 +51,26 @@ class UserRepository:
     def update_user(new_user):
         try:
             user = User.query.get(new_user.id_user)
-            if user:
-                if user.username is not None:
-                    user.username = new_user.username
-                if user.password is not None:
-                    user.password = new_user.password
-                if user.customer_name is not None:
-                    user.customer_name = new_user.customer_name
-                if user.customer_last_name is not None:
-                    user.customer_last_name = new_user.customer_last_name
-                if user.email is not None:
-                    user.email = new_user.email
-                if user.phone_number is not None:
-                    user.phone_number = new_user.phone_number
-                if user.identification_number is not None:
-                    user.identification_number = new_user.identification_number
-                if user.id_rol is not None:
-                    user.id_rol = new_user.id_rol
+            if not user:
+                return None
+            if new_user.username is not None:
+                user.username = new_user.username
+            if new_user.password is not None:
+                user.password = new_user.password
+            if new_user.customer_name is not None:
+                user.customer_name = new_user.customer_name
+            if new_user.customer_last_name is not None:
+                user.customer_last_name = new_user.customer_last_name
+            if new_user.email is not None:
+                user.email = new_user.email
+            if new_user.phone_number is not None:
+                user.phone_number = new_user.phone_number
+            if new_user.identification_number is not None:
+                user.identification_number = new_user.identification_number
+            if new_user.id_rol is not None:
+                user.id_rol = new_user.id_rol
             db.session.commit()
+            return user
         except Exception as e:
             db.session.rollback()
             raise e
