@@ -4,8 +4,6 @@ from app.repositories.loan_repository import LoanRepository
 class ReportService:
 
     def search_loans(self, isbn=None, title=None, user=None):
-        # La consulta permite buscar por ISBN, titulo o nombre del usuario.
-        # Si no se envia ningun filtro, devuelve el historial completo.
         if isbn:
             loans = LoanRepository.get_loans_by_book_isbn(isbn)
         elif title:
