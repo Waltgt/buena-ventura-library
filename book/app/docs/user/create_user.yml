@@ -1,0 +1,116 @@
+tags:
+  - Users
+summary: Crea un nuevo usuario en el sistema
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - username
+        - password
+        - customer_name
+        - customer_last_name
+        - email
+        - phone_number
+        - identification_number
+        - id_rol
+      properties:
+        username:
+          type: string
+          example: jdoe
+        password:
+          type: string
+          example: "secretpassword123"
+        customer_name:
+          type: string
+          example: John
+        customer_last_name:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: jdoe@mail.com
+        phone_number:
+          type: string
+          example: "50212345678"
+        identification_number:
+          type: string
+          example: "1234567890101"
+        id_rol:
+          type: integer
+          example: 1
+responses:
+  201:
+    description: Usuario creado exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Usuario creado exitosamente
+        data:
+          type: object
+          properties:
+            id_user:
+              type: integer
+              example: 1
+            username:
+              type: string
+              example: jdoe
+            customer_name:
+              type: string
+              example: John
+            customer_last_name:
+              type: string
+              example: Doe
+            email:
+              type: string
+              example: jdoe@mail.com
+            phone_number:
+              type: string
+              example: "50212345678"
+            identification_number:
+              type: string
+              example: "1234567890101"
+            id_rol:
+              type: integer
+              example: 1
+  400:
+    description: Datos inválidos o usuario ya existe
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Bad request
+        message:
+          type: string
+          example: User with this identification number already exists
+        error_type:
+          type: string
+          example: BadRequest
+  500:
+    description: Error interno del servidor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Internal server error
+        message:
+          type: string
+          example: An unexpected error occurred
+        error_type:
+          type: string
+          example: InternalError

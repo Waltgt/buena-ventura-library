@@ -1,0 +1,129 @@
+tags:
+  - Loans
+summary: Registra la devolución de un préstamo
+description: >
+  Solo usuarios con rol Gestor o Administrador. Requiere el header X-Username.
+  Marca la fecha de devolución real, cambia el estado a DEV y devuelve un ejemplar al stock.
+parameters:
+  - name: X-Username
+    in: header
+    type: string
+    required: true
+    description: Usuario que realiza la petición (debe tener rol Gestor o Administrador)
+  - name: loan_id
+    in: path
+    type: integer
+    required: true
+    description: ID del préstamo a devolver
+responses:
+  200:
+    description: Préstamo devuelto exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            id_loan:
+              type: integer
+              example: 1
+            id_book:
+              type: integer
+              example: 1
+            status_code:
+              type: string
+              example: DEV
+            delivery_date:
+              type: string
+              example: "2026-06-06T00:00:00"
+            expected_return_date:
+              type: string
+              example: "2026-06-20T00:00:00"
+            real_return_date:
+              type: string
+              example: "2026-06-10T15:30:00"
+        message:
+          type: string
+          example: Loan returned successfully
+  400:
+    description: El préstamo ya fue devuelto
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: El préstamo ya fue devuelto
+        message:
+          type: string
+          example: Validation error
+        error_type:
+          type: string
+          example: BadRequest
+  401:
+    description: Falta el header X-Username o el usuario no existe
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Authentication required
+        message:
+          type: string
+          example: "Falta el encabezado 'X-Username'"
+  403:
+    description: El usuario no tiene rol Gestor o Administrador
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Insufficient permissions
+        message:
+          type: string
+          example: Se requiere rol Gestor o Administrador
+  404:
+    description: Préstamo no encontrado
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Prestamo no encontrado
+        message:
+          type: string
+          example: Not found
+        error_type:
+          type: string
+          example: NotFound
+  500:
+    description: Error interno del servidor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Internal server error
+        message:
+          type: string
+          example: An unexpected error occurred
+        error_type:
+          type: string
+          example: InternalError

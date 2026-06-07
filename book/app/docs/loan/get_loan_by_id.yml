@@ -1,0 +1,61 @@
+tags:
+  - Loans
+summary: Obtiene un préstamo por su ID
+parameters:
+  - name: loan_id
+    in: path
+    type: integer
+    required: true
+    description: ID del préstamo a consultar
+responses:
+  200:
+    description: Préstamo obtenido exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            id_loan:
+              type: integer
+              example: 1
+            id_book:
+              type: integer
+              example: 1
+            book_title:
+              type: string
+              example: Cien años de soledad
+            isbn:
+              type: string
+              example: "978-3-16-148410-0"
+            id_user_loan:
+              type: integer
+              example: 2
+            user_loan_name:
+              type: string
+              example: John Doe
+            delivery_date:
+              type: string
+              example: "2026-06-06T00:00:00"
+            expected_return_date:
+              type: string
+              example: "2026-06-20T00:00:00"
+            real_return_date:
+              type: string
+              nullable: true
+              example: null
+            status_code:
+              type: string
+              example: ACT
+            id_user_register:
+              type: integer
+              example: 1
+        count:
+          type: integer
+          example: 1
+        message:
+          type: string
+          example: Loan retrieved successfully

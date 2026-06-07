@@ -1,0 +1,139 @@
+tags:
+  - Books
+summary: Crea un nuevo libro en el catálogo
+description: Solo usuarios con rol Gestor o Administrador. Requiere el header X-Username.
+parameters:
+  - name: X-Username
+    in: header
+    type: string
+    required: true
+    description: Usuario que realiza la petición (debe tener rol Gestor o Administrador)
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - isbn
+        - title
+        - publication_date
+        - stock
+        - id_author
+        - id_editorial
+      properties:
+        isbn:
+          type: string
+          example: "978-3-16-148410-0"
+        title:
+          type: string
+          example: Cien años de soledad
+        publication_date:
+          type: string
+          example: "1967-05-30"
+        stock:
+          type: integer
+          example: 5
+        id_author:
+          type: integer
+          example: 1
+        id_editorial:
+          type: integer
+          example: 1
+responses:
+  201:
+    description: Libro creado exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            id_book:
+              type: integer
+              example: 1
+            isbn:
+              type: string
+              example: "978-3-16-148410-0"
+            title:
+              type: string
+              example: Cien años de soledad
+            publication_date:
+              type: string
+              example: "1967-05-30"
+            stock:
+              type: integer
+              example: 5
+            id_author:
+              type: integer
+              example: 1
+            id_editorial:
+              type: integer
+              example: 1
+        message:
+          type: string
+          example: Book created successfully
+  400:
+    description: Datos inválidos o ISBN duplicado
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: A book with the same ISBN already exists
+        message:
+          type: string
+          example: Validation error
+        error_type:
+          type: string
+          example: BadRequest
+  401:
+    description: Falta el header X-Username o el usuario no existe
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Authentication required
+        message:
+          type: string
+          example: "Falta el encabezado 'X-Username'"
+  403:
+    description: El usuario no tiene rol Gestor o Administrador
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Insufficient permissions
+        message:
+          type: string
+          example: Se requiere rol Gestor o Administrador
+  500:
+    description: Error interno del servidor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Internal server error
+        message:
+          type: string
+          example: An unexpected error occurred
+        error_type:
+          type: string
+          example: InternalError
