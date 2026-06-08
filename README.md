@@ -7,8 +7,6 @@ Aplicación full-stack para digitalizar la gestión de una biblioteca: administr
 - **Frontend:** SPA en React + Vite + TypeScript.
 - **Orquestación:** Docker Compose.
 
-> Para el detalle de arquitectura y su justificación, ver [`INFORME_TECNICO.md`](./INFORME_TECNICO.md).
-
 ---
 
 ## Tabla de contenidos
@@ -26,14 +24,6 @@ Aplicación full-stack para digitalizar la gestión de una biblioteca: administr
 ---
 
 ## Arquitectura general
-
-```
-┌──────────────┐      HTTP/JSON       ┌───────────────┐      SQL       ┌──────────────┐
-│   Frontend   │  ───────────────►    │  Backend API  │  ───────────►  │    MySQL     │
-│ React + Vite │   localhost:5001     │     Flask     │                │   (Docker)   │
-│  (port 5173) │                      │  (port 5001)  │                │  (port 3306) │
-└──────────────┘                      └───────────────┘                └──────────────┘
-```
 
 El backend está organizado en **arquitectura por capas** (rutas → servicios →
 repositorios → modelos) y el frontend en **módulos por dominio** (Clean Architecture).
@@ -63,25 +53,7 @@ repositorios → modelos) y el frontend en **módulos por dominio** (Clean Archi
 - **`models/`** — Entidades mapeadas a tablas.
 - **`utils/auth.py`** — Decorador `roles_required` para el control de acceso por rol.
 
-### Frontend (`/front-end-apps`)
 
-| Tecnología | Versión | Para qué se usa |
-|---|---|---|
-| **React** | 19 | Librería de UI basada en componentes. |
-| **TypeScript** | 6 | Tipado estático sobre JavaScript; previene errores en tiempo de compilación. |
-| **Vite** | 8 | Empaquetador y servidor de desarrollo ultrarrápido (HMR). Compila el proyecto y sirve la SPA. |
-| **Tailwind CSS** | 4 | Framework de estilos por utilidades. Se integra vía el plugin oficial `@tailwindcss/vite` (en v4 **no** se usa `tailwind.config.js`; basta `@import "tailwindcss"` en `index.css`). |
-| **React Router DOM** | 7 | Enrutamiento de la SPA (rutas públicas/privadas y layouts anidados). |
-| **Zustand** | 5 | Manejo de estado global, ligero y sin boilerplate (no requiere Provider). |
-| **TanStack React Query** | 5 | Manejo de estado del servidor: peticiones, caché, reintentos y sincronización con la API. |
-
-**Organización del frontend (por dominio / Clean Architecture):**
-- **`layouts/`** — `AdminLayout`, `UserLayout`, `AuthLayout`.
-- **`routes/`** — `AppRoutes`, `PublicRoute`, `PrivateRoute`.
-- **`app/providers/`** — `QueryProvider` (React Query) y `StoreProvider`.
-- **`shared/components/forms/`** — Campos reutilizables: `Button`, `Input`, `Select`, `TextArea`, `Checkbox`, `RadioButton`, `FormField`, `Fieldset`.
-- **`shared/components/layout/`** — `AppHeader`, `AppSidebar`, etc.
-- **`modules/`** — Módulos por dominio (auth, books, users, loans, dashboard) con `application/`, `domain/`, `infrastructure/`, `hooks/`, `store/`, `ui/`.
 
 ### Infraestructura
 
@@ -92,48 +64,6 @@ repositorios → modelos) y el frontend en **módulos por dominio** (Clean Archi
 
 ---
 
-## Estructura del proyecto
-
-```
-buena-ventura-library/
-├── docker-compose.yml          # Orquestación de los 3 servicios
-├── .env                        # Variables de entorno (no se versiona)
-├── README.md
-├── INFORME_TECNICO.md
-│
-├── database/
-│   └── init.sql                # Esquema + datos semilla (roles, estados, admin)
-│
-├── book/                       # Backend (Flask)
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   ├── run.py                  # Punto de entrada (puerto 5001)
-│   └── app/
-│       ├── __init__.py         # create_app() + registro de Blueprints
-│       ├── config/             # Configuración por entorno
-│       ├── routes/             # Endpoints (book, user, loan, report)
-│       ├── services/           # Reglas de negocio
-│       ├── repositories/       # Acceso a datos (SQLAlchemy)
-│       ├── models/             # Entidades / tablas
-│       ├── enums/              # RolName, LoanStatusCode
-│       ├── utils/              # auth.py (roles_required)
-│       └── docs/               # YAML de Swagger por endpoint
-│
-└── front-end-apps/             # Frontend (React + Vite + TS)
-    ├── Dockerfile
-    ├── package.json
-    ├── vite.config.ts
-    └── src/
-        ├── main.tsx            # Entrada: providers + router
-        ├── App.tsx
-        ├── app/providers/
-        ├── routes/
-        ├── layouts/
-        ├── pages/
-        └── shared/
-```
-
----
 
 ## Requisitos previos
 
@@ -142,7 +72,6 @@ buena-ventura-library/
 
 **Opción B — Ejecución local:**
 - Python 3.11+
-- Node.js 22+ y npm
 - MySQL 8.0 en ejecución
 
 ---
@@ -159,10 +88,6 @@ DB_USER=biblioteca_user
 DB_PASSWORD=tu_password
 DB_PORT=3306
 
-# JWT (reservadas para autenticación; opcionales en el estado actual)
-JWT_SECRET_KEY=cambia_esto
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_HOURS=8
 ```
 
 > Las variables `DB_*` las consumen tanto el contenedor de MySQL como el backend
@@ -184,7 +109,6 @@ Esto levanta los tres servicios:
 |---|---|---|
 | Base de datos | `library-mysql` | `localhost:${DB_PORT}` (3306) |
 | Backend (API) | `book-app` | http://localhost:5001 |
-| Frontend (SPA) | `library-frontend` | http://localhost:5173 |
 
 - La primera vez, MySQL ejecuta `database/init.sql` (crea las tablas y carga roles,
   estados de préstamo y un usuario administrador).
