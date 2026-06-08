@@ -9,6 +9,7 @@ class Book(db.Model):
     title = db.Column('titulo',db.String(100), nullable=False)
     publication_date = db.Column('fecha_publicacion',db.Date, nullable=False)
     stock = db.Column('cantidad_disponible',db.Integer, nullable=False)
+    status = db.Column('estado_libro', db.Enum('disponible', 'prestado'), nullable=False, default='disponible')
 
     id_author = db.Column('id_autor',db.BigInteger, db.ForeignKey('autor.id_autor'), nullable=False)
     id_editorial = db.Column('id_editorial',db.BigInteger, db.ForeignKey('editorial.id_editorial'), nullable=False)
@@ -20,13 +21,14 @@ class Book(db.Model):
         CheckConstraint('stock >= 0', name='check_stock_non_negative'),
     )
     
-    def __init__(self, isbn, title, publication_date, stock, id_author, id_editorial):
+    def __init__(self, isbn, title, publication_date, stock, id_author, id_editorial, status='disponible'):
         self.isbn = isbn
         self.title = title
         self.publication_date = publication_date
         self.stock = stock
         self.id_author = id_author
         self.id_editorial = id_editorial
+        self.status = status
     
     def to_dict(self):
         
@@ -36,6 +38,7 @@ class Book(db.Model):
             'title': self.title,
             'publication_date': self.publication_date.isoformat() if self.publication_date else None,
             'stock': self.stock,
+            'status': self.status,
             'id_author': self.id_author,
             'id_editorial': self.id_editorial,
             'author_name': self.author.author_name if self.author else None,

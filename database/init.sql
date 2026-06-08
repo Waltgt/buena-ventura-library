@@ -28,6 +28,7 @@ CREATE TABLE libro (
     id_editorial BIGINT NOT NULL,
     fecha_publicacion DATE,
     cantidad_disponible INT NOT NULL,
+    estado_libro ENUM('disponible', 'prestado') NOT NULL DEFAULT 'disponible',
     PRIMARY KEY (id_libro),
     FOREIGN KEY (id_autor) REFERENCES autor(id_autor) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (id_editorial) REFERENCES editorial(id_editorial) ON DELETE RESTRICT ON UPDATE CASCADE
