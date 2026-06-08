@@ -42,6 +42,7 @@ services:
       - .env
     environment:
       - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@mysql-db:3306/${DB_NAME}
+      - CORS_ORIGIN=http://localhost:5173
       - SERVICE_NAME=book-service
       - PORT=5001
       - FLASK_APP=app.py

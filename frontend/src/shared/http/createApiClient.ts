@@ -1,4 +1,3 @@
-import { getValidAccessToken } from "@/modules/auth/services/tokenService";
 import { UnauthorizedError } from "@/shared/errors/UnauthorizedError";
 import { HttpError } from "@/shared/errors/HttpError";
 
@@ -29,11 +28,9 @@ export function createApiClient(baseUrl = "") {
     async request<T>(req: any): Promise<T> {
       const finalSignal = mergeSignals([req.signal]);
 
-      const token = await getValidAccessToken();
 
       const headers: Record<string, string> = {
-        ...(req.headers ?? {}),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(req.headers ?? {})
       };
 
       // Solo agregar Content-Type JSON cuando realmente es JSON

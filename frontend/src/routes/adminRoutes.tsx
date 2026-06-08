@@ -7,6 +7,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import type { SidebarRoute } from "@/shared/types/sidebar/sidebarRoute";
+import { Outlet } from "react-router-dom";
+import UsersPage from "@/modules/admin/ui/pages/UsersPage";
 
 
 
@@ -16,17 +18,32 @@ const DummyPage = ({ title }: { title: string }) => (
   </div>
 );
 
-const DashboardPage = () => <DummyPage title="Dashboard" />;
+const DashboardPage = () => {
+  return (
+    <>
+    <DummyPage title="Dashboard" />
+    <h1>test</h1>
+    <Outlet /> 
+    </>
+  )
+}
 
 export const adminRoutes: SidebarRoute[] = [
   {
-    path: "",
+    path: "/admin",
     element: DashboardPage,
+    // index: true,
     label: "Dashboard",
     icon: faChartLine,
-    permissions: [],
     showInSidebar: true,
   },
+  {
+    path: "users",
+    element: UsersPage,
+    label: "Gestion de usuarios",
+    icon: faUsers,
+    showInSidebar: true,
+  }
   // {
   //   label: "Gestión pacientes",
   //   icon: faUsers,

@@ -7,12 +7,12 @@ import {
 
 type Role = AdminRole | UserRole;
 
-export const getHomeRoute = (roles: Role[]) => {
-  if (roles.some((r) => adminAccessRoles.includes(r as AdminRole))) {
+export const getHomeRoute = (role: Role) => {
+  if (adminAccessRoles.includes(role as AdminRole)) {
     return "/admin";
   }
 
-  if (roles.some((r) => userAccessRoles.includes(r as UserRole))) {
+  if (userAccessRoles.includes(role as UserRole)) {
     return "/app";
   }
 

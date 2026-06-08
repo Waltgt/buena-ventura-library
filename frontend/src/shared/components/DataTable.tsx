@@ -288,7 +288,7 @@ const DataTable = <T extends Record<string, any>>({
                       className="px-4 py-3 border-b border-gray-100"
                     >
                       {col.hasActions ? (
-                        <div className="flex justify-center gap-2">
+                        <div className="flex justify-start gap-2">
                           {actions
                             .filter(
                               (action) =>

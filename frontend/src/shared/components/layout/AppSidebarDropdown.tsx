@@ -1,10 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 
-import {
-  faChevronDown,
-} from "@fortawesome/free-solid-svg-icons";
-
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { useAuthStore } from "@/modules/auth/store/authStore";
 import type { SidebarRoute } from "@/shared/types/sidebar/sidebarRoute";
@@ -16,132 +15,76 @@ type Props = {
   routes: SidebarRoute[];
 };
 
-const AppSidebarDropdown = ({
-  label,
-  icon,
-  routes,
-}: Props) => {
+const AppSidebarDropdown = ({ label, icon, routes }: Props) => {
+  const location = useLocation();
+  const user = useAuthStore((state) => state.user);
 
-  const [open, setOpen] =
-    useState(false);
+  const [open, setOpen] = useState(false);
 
-  const hasPermission =
-    useAuthStore(
-      (state) =>
-        state.hasPermission
-    );
+  const canAccessRoute = (allowedRoles?: string[] | string) => {
+    if (!allowedRoles) return true;
 
-  const filteredRoutes =
-    useMemo(() => {
+    const roles = Array.isArray(allowedRoles)
+      ? allowedRoles
+      : [allowedRoles];
 
-      return routes.filter(
-        (route) => {
+    return roles.includes(user?.role.name ?? "");
+  };
 
-          if (
-            !route.permissions ||
-            route.permissions.length === 0
-          ) {
-            return true;
-          }
+  const buildPath = (path?: string) => {
+    if (!path) return "/admin";
+    if (path.startsWith("/")) return path;
+    return `/admin/${path}`;
+  };
 
-          return route.permissions.every(
-            (permission) =>
-              hasPermission(permission)
-          );
-        }
-      );
-    }, [
-      routes,
-      hasPermission,
-    ]);
+  const filteredRoutes = useMemo(() => {
+    return routes.filter((route) => {
+      if (route.showInSidebar === false) return false;
+      return canAccessRoute(route.allowedRoles);
+    });
+  }, [routes, user]);
 
-  if (
-    filteredRoutes.length === 0
-  ) {
-    return null;
-  }
+  if (!filteredRoutes.length) return null;
+
+  const isActiveChild = filteredRoutes.some(
+    (r) => location.pathname === buildPath(r.path)
+  );
 
   return (
     <div className="space-y-2">
-
       <button
-        onClick={() =>
-          setOpen(!open)
-        }
-        className="
-          w-full
-          flex
-          items-center
-          justify-between
-          px-4
-          py-3
-          rounded-xl
-          text-slate-300
-          hover:bg-slate-800
-          hover:text-white
-          transition-all
-          duration-200
-        "
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200"
       >
-
         <div className="flex items-center gap-3">
-
-          {
-            icon && (
-              <FontAwesomeIcon
-                icon={icon}
-              />
-            )
-          }
-
-          <span className="font-medium">
-            {label}
-          </span>
-
+          {icon && <FontAwesomeIcon icon={icon} />}
+          <span className="font-medium">{label}</span>
         </div>
 
         <FontAwesomeIcon
           icon={faChevronDown}
-          className={`
-            transition-transform duration-200
-
-            ${
-              open
-                ? "rotate-180"
-                : ""
-            }
-          `}
+          className={`transition-transform duration-200 ${
+            open || isActiveChild ? "rotate-180" : ""
+          }`}
         />
-
       </button>
 
-      {
-        open && (
-          <div className="ml-4 space-y-2">
+      {(open || isActiveChild) && (
+        <div className="ml-4 space-y-2">
+          {filteredRoutes.map((route) => {
+            if (!route.path) return null;
 
-            {
-              filteredRoutes.map(
-                (route) => {
-
-                  if (!route.path || route.showInSidebar == false) {
-                    return null;
-                  }
-
-                  return (
-                    <AppSidebarItem
-                      key={route.path}
-                      to={route.path}
-                      label={route.label}
-                    />
-                  );
-                }
-              )
-            }
-
-          </div>
-        )
-      }
-
+            return (
+              <AppSidebarItem
+                key={route.path}
+                to={buildPath(route.path)}
+                label={route.label ?? ""}
+                icon={route.icon}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

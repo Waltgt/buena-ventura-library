@@ -8,11 +8,7 @@ type AuthState = {
 
   setUser: (user: User) => void;
   logout: () => void;
-
-  updateToken: (tokenMetadata: User["tokenMetadata"]) => void;
-
   hasRole: (role: string) => boolean;
-  hasPermission: (permission: string) => boolean;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -30,38 +26,17 @@ export const useAuthStore = create<AuthState>()(
         set({ user: null });
       },
 
-      updateToken: (tokenMetadata) => {
-        localStorage.setItem("auth-sync", Date.now().toString());
-
-        set((state) => ({
-          user: state.user
-            ? {
-                ...state.user,
-                tokenMetadata,
-              }
-            : null,
-        }));
-      },
-
       hasRole: (role) => {
         const user = get().user;
 
-        return (
-          user?.roles?.some(
-            (r) => r.toLowerCase() === role.toLowerCase()
-          ) ?? false
+        const roles = user ? [user.role.name] : [];
+
+        return roles.some(
+          (r) => r.toLowerCase() === role.toLowerCase()
         );
       },
 
-      hasPermission: (permission) => {
-        const user = get().user;
 
-        return (
-          user?.permissions?.some(
-            (p) => p.permissionName === permission
-          ) ?? false
-        );
-      },
     }),
     {
       name: "auth-storage",

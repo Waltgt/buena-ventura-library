@@ -1,12 +1,9 @@
 import type { User } from "../../domain/entities/User";
 import type {
-  LoginRequestDTO,
-  LoginResponseDTO
-} from "../../domain/dto/LoginDTO";
+  UserResponseDTO
+} from "../../domain/dto/UserDTO";
 
-
-export function loginDtoToUser(dto: LoginResponseDTO): User {
-
+export function userToDomain(dto: UserResponseDTO): User {
   return {
     id: dto.id_user,
     role: {
@@ -22,3 +19,8 @@ export function loginDtoToUser(dto: LoginResponseDTO): User {
     username: dto.username
   };
 }
+
+export function usersToDomain(dtos: UserResponseDTO[]): User[] {
+  return dtos.map(userToDomain);
+}
+

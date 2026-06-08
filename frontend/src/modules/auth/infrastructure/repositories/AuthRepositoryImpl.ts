@@ -2,22 +2,25 @@ import type { AuthRepository } from "../../application/interfaces/AuthRepository
 import type { HttpClient } from "@/shared/http/HttpClient";
 import { createApiClient } from "@/shared/http/createApiClient";
 
-import type { LoginRequestDto, LoginResponseDto, LogoutRequestDto } from "../../domain/dto/authLogin.dto";
-import type { RefreshRequestDto, RefreshResponseDto } from "../../domain/dto/authRefresh.dto";
-import { loginDtoToUser, refreshDtoToTokenMetadata } from "../mappers/authMapper";
+import type {
+  LoginRequestDTO
+  , LoginResponseDTO
+} from "../../domain/dto/LoginDTO";
+import { loginDtoToUser } from "../mappers/authMapper";
 import { API_ROUTES } from "@/shared/utils/apiRoutes";
 import type { ApiResponse } from "@/shared/http/ApiResponse";
 
 export function createAuthRepository(http: HttpClient): AuthRepository {
   return {
     async login(username: string, password: string, signal) {
-      const body: LoginRequestDto = {
+
+      const body: LoginRequestDTO = {
         username,
         password
       }
 
-      const dto = await http.request<ApiResponse<LoginResponseDto>>({
-        url: API_ROUTES.KEYCLOAK_LOGIN,
+      const dto = await http.request<ApiResponse<LoginResponseDTO>>({
+        url: API_ROUTES.AUTH_LOGIN,
         method: "POST",
         body,
         withCredentials: false,
@@ -26,43 +29,10 @@ export function createAuthRepository(http: HttpClient): AuthRepository {
       });
 
       return loginDtoToUser(dto.data);
-    },
+    }
 
-    async refresh(refreshToken: string, signal: AbortSignal) {
 
-      const body : RefreshRequestDto = {
-        refreshToken : refreshToken,
-      }
-
-      const dto = await http.request<ApiResponse<RefreshResponseDto>>({
-        url: API_ROUTES.KEYCLOAK_REFRESH,
-        method: "POST",
-        body,
-        withCredentials: false,
-        timeoutMs: 15000,
-        signal,
-      });
-
-      return refreshDtoToTokenMetadata(dto.data);
-    },
-
-    async logout(refreshToken: string, signal: AbortSignal) {
-
-      const body : LogoutRequestDto = {
-        refreshToken: refreshToken,
-      }
-      const dto = await http.request<void>({
-        url: API_ROUTES.KEYCLOAK_LOGOUT,
-        method: "POST",
-        body,
-        withCredentials: false,
-        timeoutMs: 15000,
-        signal,
-      });
-
-      
-    },
-  };
+  }
 }
 
 

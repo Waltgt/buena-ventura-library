@@ -20,24 +20,11 @@ export const ProtectedRoute = ({
 
   if (!user) return <Navigate to="/login" replace />;
 
-  const userRoles = Array.isArray(user.roles)
-    ? (user.roles.map(String) as Role[])
-    : [];
-
-  const userPermissions = Array.isArray(user.permissions)
-    ? user.permissions.map((p) => p.permissionName)
-    : [];
+  const userRole = user.role?.name as Role;
 
   if (allowedRoles?.length) {
-    const hasRole = userRoles.some((r) => allowedRoles.includes(r));
+    const hasRole = allowedRoles.includes(userRole);
     if (!hasRole) return <Navigate to="/unauthorized" replace />;
-  }
-
-  if (requiredPermissions?.length) {
-    const hasPermissions = requiredPermissions.every((p) =>
-      userPermissions.includes(p)
-    );
-    if (!hasPermissions) return <Navigate to="/unauthorized" replace />;
   }
 
   return children ? <>{children}</> : <Outlet />;

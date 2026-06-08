@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
-  faHospital,
   faUser,
   faLock,
   faEye,
   faEyeSlash,
+  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,7 +47,7 @@ export default function LoginPage() {
         })
       );
 
-      const roles = user.roles as Role[];
+      const roles = user.role.name as Role;
 
       navigate(getHomeRoute(roles));
     } catch (error: any) {
@@ -69,15 +69,15 @@ export default function LoginPage() {
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 text-white">
           <div className="max-w-lg mx-auto flex flex-col justify-center px-12">
             <div className="w-24 h-24 rounded-3xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-8">
-              <FontAwesomeIcon icon={faHospital} className="text-5xl" />
+              <FontAwesomeIcon icon={faBook} className="text-5xl" />
             </div>
 
             <h1 className="text-5xl font-bold leading-tight mb-6">
-              Sistema Hospitalario
+              Librería Buenaventura
             </h1>
 
             <p className="text-lg text-blue-100 leading-relaxed">
-              Plataforma integral para la gestión de pacientes, expedientes clínicos, consultas médicas y procesos administrativos.
+              Administra libros, usuarios y préstamos en una plataforma simple y segura.
             </p>
 
             <div className="mt-10 flex gap-4">
@@ -98,15 +98,13 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Login */}
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="w-full max-w-md">
             <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-8">
 
-              {/* Logo móvil */}
               <div className="lg:hidden flex justify-center mb-6">
                 <div className="w-20 h-20 rounded-3xl bg-blue-100 flex items-center justify-center">
-                  <FontAwesomeIcon icon={faHospital} className="text-3xl text-blue-600" />
+                  <FontAwesomeIcon icon={faBook} className="text-3xl text-blue-600" />
                 </div>
               </div>
 
@@ -121,7 +119,6 @@ export default function LoginPage() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
 
-                {/* Usuario */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Usuario
@@ -142,7 +139,6 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* Contraseña */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Contraseña
@@ -182,7 +178,7 @@ export default function LoginPage() {
 
               <div className="mt-8 pt-6 border-t border-slate-200 text-center">
                 <p className="text-sm text-slate-500">
-                  © 2026 Sistema Hospitalario
+                  © 2026 Librería Buenaventura
                 </p>
               </div>
 

@@ -55,8 +55,10 @@ class UserRepository:
                 return None
             if new_user.username is not None:
                 user.username = new_user.username
-            if new_user.password is not None:
+            
+            if new_user.password:
                 user.password = new_user.password
+
             if new_user.customer_name is not None:
                 user.customer_name = new_user.customer_name
             if new_user.customer_last_name is not None:

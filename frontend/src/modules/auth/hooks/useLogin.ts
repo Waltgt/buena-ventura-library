@@ -1,6 +1,5 @@
 
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "../application/useCases/loginUser";
 import { authRepository } from "../infrastructure/repositories/AuthRepositoryImpl";
 import { useAuthStore } from "../store/authStore";
 
@@ -11,11 +10,9 @@ export const useLogin = () => {
   // const setPermissionsLoaded = useAuthStore((state) => state.)
   return useMutation({
     mutationFn: ({ username, password, signal}: LoginVars) =>
-      loginUser(authRepository,username, password, signal),
-
+      authRepository.login(username, password, signal),
     onSuccess: (user) => {
       setUser(user);
-      // setPermissionsLoaded(true);
     },
   });
 };
