@@ -1,0 +1,19 @@
+tags:
+  - Auth
+summary: Cierra la sesión del usuario
+description: >
+  La API es stateless (no mantiene sesión ni token en el servidor), por lo que este
+  endpoint solo confirma el cierre de sesión. El cliente debe limpiar su estado y
+  credenciales locales.
+responses:
+  200:
+    description: Sesión cerrada exitosamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Sesión cerrada exitosamente

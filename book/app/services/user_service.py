@@ -1,7 +1,7 @@
 import re
 
 from app.repositories.user_repository import UserRepository
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized
 from flask import jsonify
 from app.utils.user_util import UserUtils
 from app.models.rol import Rol
@@ -13,10 +13,18 @@ from app.models.user import User
 class UserService:
         
     def get_user_by_username(self, username):
-        
+
         user = UserRepository.get_user_by_username(username)
         if not user:
             return []
+        return user
+
+    def authenticate(self, username, password):
+        if not username or not password:
+            raise BadRequest("Usuario y contraseña son obligatorios")
+        user = UserRepository.get_user_by_username(username)
+        if not user or user.password != password:
+            raise Unauthorized("Usuario o contraseña incorrectos")
         return user
     
     def create_user(self, user_data):        
