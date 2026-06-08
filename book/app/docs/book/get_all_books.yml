@@ -30,6 +30,10 @@ responses:
               stock:
                 type: integer
                 example: 5
+              status:
+                type: string
+                enum: [disponible, prestado]
+                example: disponible
               id_author:
                 type: integer
                 example: 1

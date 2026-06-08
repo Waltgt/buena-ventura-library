@@ -35,6 +35,8 @@ class BookRepository:
                     book.publication_date = bookUpdate.publication_date
                 if bookUpdate.stock is not None:
                     book.stock = bookUpdate.stock
+                if bookUpdate.status is not None:
+                    book.status = bookUpdate.status
                 if bookUpdate.id_author is not None:
                     book.id_author = bookUpdate.id_author
                 if bookUpdate.id_editorial is not None:
