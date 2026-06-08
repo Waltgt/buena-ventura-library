@@ -69,12 +69,20 @@ class UserService:
     def update_user(self, user_data):
         if not user_data.get('id_user'):
             raise BadRequest("El campo 'id_user' es obligatorio para actualizar")
-        self.validate_user_request(user_data)
+
+        if not user_data.get("password"):
+            user_data.pop("password", None)
+
+        self.validate_user_request(user_data, is_update=True)
+
         user = self.map_user_data_to_user(user_data)
         user.id_user = user_data.get('id_user')
+
         updated_user = UserRepository.update_user(user)
+
         if not updated_user:
             raise NotFound("Usuario no encontrado")
+
         return updated_user
 
     def delete_user(self, user_id):
@@ -84,24 +92,32 @@ class UserService:
         role = UserUtils.validate_user(user_name, valid_role)
         return jsonify({"message": "User is valid"}), 200
     
-    def validate_user_request(self,user_data):
+    def validate_user_request(self, user_data, is_update=False):
         if not user_data:
             raise BadRequest("No se proporcionaron datos")
+
         if not user_data.get('username'):
             raise BadRequest("El campo 'username' es obligatorio")
-        if not user_data.get('password'):
-            raise BadRequest("El campo 'password' es obligatorio")
+
+        if not is_update:
+            if not user_data.get('password'):
+                raise BadRequest("El campo 'password' es obligatorio")
+
         if not user_data.get('customer_name'):
             raise BadRequest("El campo 'customer_name' es obligatorio")
+
         if not user_data.get('customer_last_name'):
             raise BadRequest("El campo 'customer_last_name' es obligatorio")
+
         if not user_data.get('email'):
             raise BadRequest("El campo 'email' es obligatorio")
+
         if not user_data.get('phone_number'):
             raise BadRequest("El campo 'phone_number' es obligatorio")
+
         if not user_data.get('identification_number'):
             raise BadRequest("El campo 'identification_number' es obligatorio")
-    
+
     def validate_email(self, email):        
         
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'

@@ -52,7 +52,7 @@ def find_user_by_username(username):
         }), 500
         
 @user_bp.route('/', methods=['POST'])
-@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
+# @roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/create_user.yml')
 def create_user():
     try:
