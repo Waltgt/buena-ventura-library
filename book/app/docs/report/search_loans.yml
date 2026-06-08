@@ -26,6 +26,12 @@ parameters:
     type: string
     required: false
     description: Filtra por nombre o apellido del usuario
+  - name: format
+    in: query
+    type: string
+    required: false
+    enum: [json, csv]
+    description: Formato de salida. Por defecto JSON; con 'csv' descarga un archivo.
 responses:
   200:
     description: Reporte generado exitosamente

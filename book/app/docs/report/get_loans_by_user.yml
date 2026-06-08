@@ -13,6 +13,12 @@ parameters:
     type: integer
     required: true
     description: ID del usuario del cual se consultan los préstamos
+  - name: format
+    in: query
+    type: string
+    required: false
+    enum: [json, csv]
+    description: Formato de salida. Por defecto JSON; con 'csv' descarga un archivo.
 responses:
   200:
     description: Préstamos del usuario obtenidos exitosamente
