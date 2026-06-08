@@ -41,8 +41,6 @@ class BookService:
             id_author=book_data.get('id_author'),
             id_editorial=book_data.get('id_editorial')
         )
-        # En crear, id_book queda en None y MySQL lo genera (autoincrement).
-        # En actualizar, conserva el id que envia el frontend para ubicar la fila.
         book.id_book = book_data.get('id_book')
         return book
     

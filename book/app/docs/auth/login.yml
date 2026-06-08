@@ -1,0 +1,77 @@
+tags:
+  - Auth
+summary: Autentica un usuario con usuario y contraseña
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: admin
+        password:
+          type: string
+          example: admin123
+responses:
+  200:
+    description: Autenticación exitosa
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Autenticación exitosa
+        data:
+          type: object
+          properties:
+            username:
+              type: string
+              example: admin
+            customer_name:
+              type: string
+              example: Administrador
+            customer_last_name:
+              type: string
+              example: Del Sistema
+            email:
+              type: string
+              example: admin@biblioteca.com
+            rol_name:
+              type: string
+              example: Administrador
+  400:
+    description: Faltan credenciales
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Usuario y contraseña son obligatorios
+  401:
+    description: Credenciales incorrectas
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Unauthorized
+        message:
+          type: string
+          example: Usuario o contraseña incorrectos
+        error_type:
+          type: string
+          example: Unauthorized

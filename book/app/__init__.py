@@ -26,11 +26,13 @@ def create_app():
     from app.routes.user_route import user_bp
     from app.routes.loan_route import loan_bp
     from app.routes.report_route import report_bp
-    
+    from app.routes.auth_route import auth_bp
+
     app.register_blueprint(book_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(loan_bp)
-    app.register_blueprint(report_bp)    
+    app.register_blueprint(report_bp)
+    app.register_blueprint(auth_bp)
 
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):

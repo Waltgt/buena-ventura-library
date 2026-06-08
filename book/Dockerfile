@@ -13,5 +13,4 @@ COPY . .
 
 EXPOSE 5001
 
-# Comando para ejecutar el servicio
 CMD ["python", "run.py"]
