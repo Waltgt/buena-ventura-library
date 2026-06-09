@@ -34,6 +34,8 @@ class Loan(db.Model):
             'isbn': self.book.isbn if self.book else None,
             'id_editorial': self.book.id_editorial if self.book else None,
             'editorial_name': self.book.editorial.name_editorial if self.book and self.book.editorial else None,
+            'id_author': self.book.id_author if self.book else None,
+            'author_name': self.book.author.author_name if self.book and self.book.author else None,
             'id_user_loan': self.id_user_loan,
             'user_loan_name': f"{self.user_loan.customer_name} {self.user_loan.customer_last_name}" if self.user_loan else None,
             'delivery_date': self.delivery_date.isoformat() if self.delivery_date else None,

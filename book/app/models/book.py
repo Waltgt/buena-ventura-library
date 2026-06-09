@@ -40,7 +40,7 @@ class Book(db.Model):
             'stock': self.stock,
             'status': self.status,
             'id_author': self.id_author,
-            'id_editorial': self.id_editorial,
             'author_name': self.author.author_name if self.author else None,
+            'id_editorial': self.id_editorial,
             'editorial_name': self.editorial.name_editorial if self.editorial else None
         }
