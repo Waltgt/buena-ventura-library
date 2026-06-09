@@ -55,6 +55,9 @@ responses:
               isbn:
                 type: string
                 example: "978-3-16-148410-0"
+              editorial_name:
+                type: string
+                example: Sudamericana
               user_loan_name:
                 type: string
                 example: John Doe
