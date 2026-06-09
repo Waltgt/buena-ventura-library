@@ -39,7 +39,8 @@ class BookService:
             publication_date=datetime.strptime(book_data.get('publication_date'), '%Y-%m-%d').date() if book_data.get('publication_date') else None,
             stock=book_data.get('stock'),
             id_author=book_data.get('id_author'),
-            id_editorial=book_data.get('id_editorial')
+            id_editorial=book_data.get('id_editorial'),
+            status=book_data.get('status')
         )
         book.id_book = book_data.get('id_book')
         return book

@@ -33,6 +33,11 @@ parameters:
         stock:
           type: integer
           example: 5
+        status:
+          type: string
+          enum: [disponible, prestado]
+          example: disponible
+          description: Opcional. Por defecto 'disponible'.
         id_author:
           type: integer
           example: 1
@@ -66,6 +71,10 @@ responses:
             stock:
               type: integer
               example: 5
+            status:
+              type: string
+              enum: [disponible, prestado]
+              example: disponible
             id_author:
               type: integer
               example: 1
