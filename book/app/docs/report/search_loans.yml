@@ -58,6 +58,9 @@ responses:
               editorial_name:
                 type: string
                 example: Sudamericana
+              author_name:
+                type: string
+                example: Gabriel García Márquez
               user_loan_name:
                 type: string
                 example: John Doe

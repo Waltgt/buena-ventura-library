@@ -34,6 +34,9 @@ responses:
             editorial_name:
               type: string
               example: Sudamericana
+            author_name:
+              type: string
+              example: Gabriel García Márquez
             id_user_loan:
               type: integer
               example: 2

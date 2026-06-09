@@ -29,7 +29,7 @@ class ReportService:
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow([
-            'ID Prestamo', 'ID Libro', 'Libro', 'ISBN', 'Editorial', 'Usuario',
+            'ID Prestamo', 'ID Libro', 'Libro', 'ISBN', 'Editorial', 'Autor', 'Usuario',
             'Fecha entrega', 'Fecha devolucion esperada', 'Fecha devolucion real', 'Estado'
         ])
         for loan in loans:
@@ -40,6 +40,7 @@ class ReportService:
                 data.get('book_title'),
                 data.get('isbn'),
                 data.get('editorial_name'),
+                data.get('author_name'),
                 data.get('user_loan_name'),
                 data.get('delivery_date'),
                 data.get('expected_return_date'),
