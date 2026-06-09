@@ -4,11 +4,18 @@ import {
   faFileLines,
   faAmbulance,
   faCartFlatbed,
+  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 
 import type { SidebarRoute } from "@/shared/types/sidebar/sidebarRoute";
 import { Outlet } from "react-router-dom";
 import UsersPage from "@/modules/admin/ui/pages/UsersPage";
+import BooksListPage from "@/modules/book/ui/pages/BooksListPage";
+import BookFormPage from "@/modules/book/ui/pages/BookFormPage";
+import BookDetailsPage from "@/modules/book/ui/pages/BookDetailsPage";
+import BookAssignmentPage from "@/modules/book/ui/pages/BookAssignmentPage";
+import LoanManagementPage from "@/modules/book/ui/pages/LoanManagementPage";
+
 
 
 
@@ -43,6 +50,47 @@ export const adminRoutes: SidebarRoute[] = [
     label: "Gestion de usuarios",
     icon: faUsers,
     showInSidebar: true,
+  },
+  {
+    path: "users",
+    element: UsersPage,
+    label: "Gestion de libros",
+    icon: faBook,
+    showInSidebar: true,
+    children: [
+      {
+        path: "books",
+        label: "Libros del sistema",
+        element: BooksListPage
+
+      },
+      {
+        path: "books/create",
+        element: BookFormPage,
+        showInSidebar: false
+      },  
+      {
+        path: "books/detail",
+        element: BookDetailsPage,
+        showInSidebar: false
+      },  
+      {
+        path: "books/assign",
+        element: BookAssignmentPage,
+        showInSidebar: false
+      },  
+      {
+        path: "books/assign/edit/:id",
+        element: BookAssignmentPage,
+        showInSidebar: false
+      },  
+      {
+        path: "books/loans",
+        element: LoanManagementPage,
+        showInSidebar: true,
+        label: "Administrar préstamos"
+      },  
+    ]
   }
   // {
   //   label: "Gestión pacientes",

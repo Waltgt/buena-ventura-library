@@ -45,11 +45,11 @@ export function createApiClient(baseUrl = "") {
 
       const body =
         req.body instanceof FormData ||
-        req.body instanceof URLSearchParams
+          req.body instanceof URLSearchParams
           ? req.body
           : req.body != null
-          ? JSON.stringify(req.body)
-          : undefined;
+            ? JSON.stringify(req.body)
+            : undefined;
 
       const res = await fetch(`${baseUrl}${req.url}`, {
         method: req.method ?? "GET",
@@ -72,11 +72,27 @@ export function createApiClient(baseUrl = "") {
         return undefined as T;
       }
 
+      const responseType = req.responseType ?? "json";
+
+      if (res.status === 204) {
+        return undefined as T;
+      }
+
+      if (responseType === "blob") {
+        return (await res.blob()) as T;
+      }
+
+      if (responseType === "text") {
+        return (await res.text()) as T;
+      }
+
       const contentType = res.headers.get("content-type") ?? "";
 
       if (!contentType.includes("application/json")) {
-        return undefined as T;
+        throw new HttpError(res.status, "Expected JSON response");
       }
+
+      return (await res.json()) as T;
 
       return (await res.json()) as T;
     },
