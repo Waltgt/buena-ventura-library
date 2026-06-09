@@ -62,6 +62,9 @@ responses:
             isbn:
               type: string
               example: "978-3-16-148410-0"
+            editorial_name:
+              type: string
+              example: Sudamericana
             id_user_loan:
               type: integer
               example: 2
