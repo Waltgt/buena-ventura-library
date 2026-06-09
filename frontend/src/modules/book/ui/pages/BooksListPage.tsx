@@ -2,9 +2,12 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import DataTable from "@/shared/components/DataTable";
-import Button from "@/shared/components/forms/Button";
+import Button, { BUTTON_COLORS } from "@/shared/components/forms/Button";
 
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useBooks } from "../../hooks/books/useBooks";
+import type { TableAction, TableColumn } from "@/shared/types/table/TableTypes";
+import type { Book } from "../../domain/entities/Book";
 
 const BooksListPage = () => {
   const navigate = useNavigate();
@@ -12,24 +15,29 @@ const BooksListPage = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  //todo: agregar hook de getall
-  const books: any[] = [];
+  const { data: books = [], isLoading: booksLoading } = useBooks();
 
-  const columns = useMemo(() => [
-    { key: "isbn", label: "ISBN" },
-    { key: "title", label: "Título" },
-    { key: "author", label: "Autor" },
-    { key: "editorial", label: "Editorial" },
-    { key: "available", label: "Disponibles" },
+
+  const columns: TableColumn[] = useMemo(() => [
+    { key: "isbn", label: "ISBN", hasInput: true },
+    { key: "title", label: "Título", hasInput: true  },
+    { key: "author.name", label: "Autor", hasInput: true  },
+    { key: "editorial.name", label: "Editorial", hasInput: true  },
+    { key: "publicationDate", label: "Fecha de publicación", hasInput: true, inputType: "date" },
+    { key: "status", label: "Estado", hasInput: true  },
     { key: "actions", label: "Acciones", hasActions: true },
   ], []);
 
-  const actions = [
+  const actions: TableAction<Book>[] = [
     {
-      label: "Ver detalle",
-      color: "blue",
-      onClick: (row: any) => navigate(`/books/${row.id}`)
+      title: "Ver detalles de libros",
+      label: "Ver",
+      color: BUTTON_COLORS.GRAY,
+      icon: faEye,
+      onClick: (row: any) =>
+        navigate(`detail/${row.id}`),
     }
+
   ];
 
   return (
@@ -56,11 +64,12 @@ const BooksListPage = () => {
         <DataTable
           columns={columns}
           data={books}
-          actions={actions as any}
+          actions={actions}
           page={page}
           pageSize={pageSize}
           total={books.length}
           onPageChange={setPage}
+          loading={booksLoading}
         />
       </div>
 

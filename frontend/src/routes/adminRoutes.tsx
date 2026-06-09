@@ -52,7 +52,7 @@ export const adminRoutes: SidebarRoute[] = [
     showInSidebar: true,
   },
   {
-    path: "users",
+    path: "books",
     element: UsersPage,
     label: "Gestion de libros",
     icon: faBook,
@@ -70,17 +70,22 @@ export const adminRoutes: SidebarRoute[] = [
         showInSidebar: false
       },  
       {
-        path: "books/detail",
+        path: "books/edit/:id",
+        element: BookFormPage,
+        showInSidebar: false
+      },  
+      {
+        path: "books/detail/:id",
         element: BookDetailsPage,
         showInSidebar: false
       },  
       {
-        path: "books/assign",
+        path: "loans/assign/new",
         element: BookAssignmentPage,
         showInSidebar: false
       },  
       {
-        path: "books/assign/edit/:id",
+        path: "loans/assign/edit/:id",
         element: BookAssignmentPage,
         showInSidebar: false
       },  

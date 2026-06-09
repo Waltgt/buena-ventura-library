@@ -27,7 +27,7 @@ class LoanService:
             loan = self.map_loan_from_request(loan_data)
             self.validate_loan(loan)
 
-            book = BookRepository.get_book_by_id(loan.id_book)
+            book = book = BookRepository.get_book_entity_by_id(loan.id_book)
             self.validate_book_available(book)
             self.validate_user_exists(loan.id_user_loan)
             self.validate_user_has_no_active_loan(loan.id_user_loan)
@@ -49,7 +49,7 @@ class LoanService:
             if loan.real_return_date is not None:
                 raise BadRequest("El prestamo ya fue devuelto")
 
-            book = BookRepository.get_book_by_id(loan.id_book)
+            book = book = BookRepository.get_book_entity_by_id(loan.id_book)
             returned_status_id = self.get_status_id(LoanStatusCode.RETURNED.value)
             return LoanRepository.return_loan(loan, book, returned_status_id)
         except (BadRequest, NotFound):

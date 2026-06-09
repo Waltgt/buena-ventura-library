@@ -53,7 +53,6 @@ const renderAdminRoutes = (routes: any[]) =>
   });
 
 export const AppRoutes = () => {
-  console.log(PERMISSIONS)
   return (
     <Routes>
       <Route element={<PublicRoute />}>

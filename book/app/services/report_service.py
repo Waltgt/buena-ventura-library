@@ -39,7 +39,7 @@ class ReportService:
                 data.get('id_book'),
                 data.get('book_title'),
                 data.get('isbn'),
-                data.get('editorial_name'),
+                data.get('name_editorial'),
                 data.get('author_name'),
                 data.get('user_loan_name'),
                 data.get('delivery_date'),

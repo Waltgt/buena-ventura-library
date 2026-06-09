@@ -83,9 +83,9 @@ export function createLoanRepository(http: HttpClient): LoanRepository {
             return loansToDomain(dto.data);
         },
 
-        async getLoansByBook(userId, signal) {
+        async getLoansByBook(bookId, signal) {
             const dto = await http.request<ApiResponse<LoanResponseDTO[]>>({
-                url: `${API_ROUTES.LOAN_GET_ALL_BY_BOOK}/${userId}`,
+                url: `${API_ROUTES.LOAN_GET_ALL_BY_BOOK}/${bookId}`,
                 method: "GET",
                 ...withUserHeader(),
                 signal,

@@ -2,45 +2,31 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import DataTable from "@/shared/components/DataTable";
-import Button from "@/shared/components/forms/Button";
+import Button, { BUTTON_COLORS } from "@/shared/components/forms/Button";
 import Modal from "@/shared/components/Modal";
 import Toast from "@/shared/components/Toast";
 
 import { useToast } from "@/shared/hooks/useToast";
 import { TOAST_TYPES } from "@/shared/types/toast/ToastType";
-import type { TableColumn } from "@/shared/types/table/TableTypes";
+import type { TableAction, TableColumn } from "@/shared/types/table/TableTypes";
 
 import {
   faCheck,
   faBook,
   faRotate,
-  faPen
+  faPen,
+  faArrowRightToBracket,
+  faClockRotateLeft,
+  faFileExcel,
+  faAdd
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-type Loan = {
-  id: number;
-  user: string;
-  book: string;
-  isbn: string;
-  deliveryDate: string;
-  expectedDate: string;
-  realDate?: string | null;
-  status: "ACT" | "DEV" | "VENC";
-};
+import { useLoans } from "../../hooks/loans/useLoans";
+import { LoanStatusMap, type LoanStatusCode } from "../../types/LoanTypes";
+import type { Loan } from "../../domain/entities/Loan";
 
 const PAGE_SIZE = 15;
-
-const dummyLoans: Loan[] = Array.from({ length: 45 }).map((_, i) => ({
-  id: i + 1,
-  user: `Usuario ${i + 1}`,
-  book: "Cien Años de Soledad",
-  isbn: "978-84-376-0494-7",
-  deliveryDate: "2026-01-01",
-  expectedDate: "2026-01-10",
-  realDate: i % 4 === 0 ? "2026-01-09" : null,
-  status: i % 4 === 0 ? "DEV" : "ACT"
-}));
 
 const LoanManagementPage = () => {
   const navigate = useNavigate();
@@ -50,102 +36,81 @@ const LoanManagementPage = () => {
   const [selected, setSelected] = useState<Loan | null>(null);
   const [openReturn, setOpenReturn] = useState(false);
 
+  const { data: loans = [], isLoading } = useLoans();
+
   const kpis = useMemo(() => {
-    const active = dummyLoans.filter(l => l.status === "ACT").length;
-    const returned = dummyLoans.filter(l => l.status === "DEV").length;
+    const active = loans.filter(l => l.status === "ACT").length;
+    const returned = loans.filter(l => l.status === "DEV").length;
 
     return {
       active,
       returned,
-      total: dummyLoans.length
+      total: loans.length
     };
-  }, []);
+  }, [loans]);
 
   const formatDate = (d?: string | null) =>
     d ? new Date(d).toLocaleDateString() : "-";
 
-  const resolveStatus = (loan: Loan) => {
-    if (loan.status === "DEV") return "Devuelto";
-
-    const today = new Date();
-    const due = new Date(loan.expectedDate);
-
-    if (!loan.realDate && today > due) return "Vencido";
-
-    return "Activo";
-  };
-
-  const getStatusBadge = (loan: Loan) => {
-    const status = resolveStatus(loan);
-
-    if (status === "Activo") {
-      return (
-        <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-          Activo
-        </span>
-      );
-    }
-
-    if (status === "Vencido") {
-      return (
-        <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-          Vencido
-        </span>
-      );
-    }
-
-    return (
-      <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-        Devuelto
-      </span>
-    );
+  const getStatusLabel = (status: LoanStatusCode) => {
+    return LoanStatusMap[status];
   };
 
   const paginated = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return dummyLoans.slice(start, start + PAGE_SIZE);
-  }, [page]);
+    return loans.slice(start, start + PAGE_SIZE);
+  }, [page, loans]);
 
-  const totalPages = Math.ceil(dummyLoans.length / PAGE_SIZE);
+  const totalPages = Math.ceil(loans.length / PAGE_SIZE);
 
   const columns: TableColumn[] = useMemo(() => [
     { key: "user", label: "Usuario", hasInput: true },
     { key: "book", label: "Libro", hasInput: true },
-    { key: "isbn", label: "ISBN" , hasInput: true},
-    { key: "deliveryDate", label: "Entrega" , hasInput: true, inputType: "date"},
-    { key: "expectedDate", label: "Devolución" , inputType: "date"},
+    { key: "isbn", label: "ISBN", hasInput: true },
+    { key: "deliveryDate", label: "Entrega", hasInput: true, inputType: "date" },
+    { key: "expectedDate", label: "Devolución", inputType: "date" },
     { key: "statusLabel", label: "Estado" },
     { key: "actions", label: "Acciones", hasActions: true }
   ], []);
 
   const data = useMemo(() => {
     return paginated.map(l => ({
-      ...l,
-      deliveryDate: formatDate(l.deliveryDate),
-      expectedDate: formatDate(l.expectedDate),
-      statusLabel: getStatusBadge(l)
+      id: l.id,
+      user: l.user.name,
+      book: l.book.title,
+      isbn: l.book.isbn,
+      deliveryDate: formatDate(l.expectedReturnDate),
+      expectedDate: formatDate(l.expectedReturnDate),
+      status: l.status,
+      statusLabel: getStatusLabel(l.status)
     }));
   }, [paginated]);
 
-  const actions = [
+
+  const actions: TableAction<Loan>[] = [
     {
-      label: "Editar",
-      color: "blue",
-      icon: faPen,
-      onClick: (row: Loan) => {
-        navigate(`/admin/books/assign/edit/${row.id}`);
+      title: "Editar",
+      label: "Ampliar plazo",
+      color: BUTTON_COLORS.GRAY,
+      icon: faClockRotateLeft,
+      onClick: (row: any) => {
+        navigate(`/admin/loans/assign/edit/${row.id}`);
       },
-      hidden: (row: Loan) => row.status === "DEV"
+      visible: (row: any) => row.status !== "DEV"
     },
     {
+      title: "Devolver préstamo de libri",
       label: "Devolver",
-      color: "green",
-      onClick: (row: Loan) => {
-        setSelected(row);
+      color: BUTTON_COLORS.GREEN,
+      icon: faArrowRightToBracket,
+      onClick: (row: any) => {
+        const loan = loans.find(l => l.id === row.id) || null;
+        setSelected(loan);
         setOpenReturn(true);
       },
-      hidden: (row: Loan) => row.status === "DEV"
-    }
+      visible: (row: any) => row.status !== "DEV"
+    },
+
   ];
 
   const confirmReturn = () => {
@@ -153,11 +118,15 @@ const LoanManagementPage = () => {
     setOpenReturn(false);
   };
 
+  const getReport = () => {
+    showToast("Obteniendo reporte", TOAST_TYPES.LOADING)
+  }
+
+
   return (
     <>
       <div className="p-6 lg:p-8 bg-slate-50 min-h-screen space-y-6">
 
-        {/* HEADER */}
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-semibold text-slate-800">
@@ -167,15 +136,24 @@ const LoanManagementPage = () => {
               Gestión de préstamos del sistema
             </p>
           </div>
+          <div className="flex gap-2">
+            <Button
 
-          <Button
-            label="Nuevo préstamo"
-            color="blue"
-            onClick={() => navigate("/admin/books/assign")}
-          />
+              icon={faFileExcel}
+              label="Exportar"
+              title="Exportar a excel"
+              color="green"
+              onClick={getReport}
+            />
+            <Button
+              label="Nuevo préstamo"
+              icon={faAdd}
+              color="blue"
+              onClick={() => navigate("/admin/loans/assign/new")}
+            />
+          </div>
         </div>
 
-        {/* KPI */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
           <div className="bg-white border border-slate-100 rounded-2xl p-5">
@@ -208,7 +186,6 @@ const LoanManagementPage = () => {
 
         </div>
 
-        {/* TABLE */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
 
           <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
@@ -235,14 +212,14 @@ const LoanManagementPage = () => {
             actions={actions as any}
             page={page}
             pageSize={PAGE_SIZE}
-            total={dummyLoans.length}
+            total={loans.length}
             onPageChange={setPage}
+            loading={isLoading}
           />
         </div>
 
       </div>
 
-      {/* MODAL */}
       <Modal
         abierto={openReturn}
         onClose={() => setOpenReturn(false)}
@@ -255,9 +232,9 @@ const LoanManagementPage = () => {
           </p>
 
           <div className="bg-slate-50 rounded-xl p-4">
-            <p className="font-medium">{selected?.book}</p>
+            <p className="font-medium">{selected?.book.title}</p>
             <p className="text-sm text-slate-500">
-              Usuario: {selected?.user}
+              Usuario: {selected?.user.name}
             </p>
           </div>
 
@@ -282,7 +259,6 @@ const LoanManagementPage = () => {
         </div>
       </Modal>
 
-      {/* TOAST */}
       <div className="fixed top-4 right-4 z-[99999]">
         <Toast
           show={toast.show}
