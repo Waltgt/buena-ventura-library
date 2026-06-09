@@ -1,3 +1,4 @@
+import type { ResponseType } from "./ResponseType";
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export type HttpRequest = {
@@ -8,6 +9,7 @@ export type HttpRequest = {
   withCredentials?: boolean;
   signal?: AbortSignal;
   timeoutMs?: number;
+  responseType?: ResponseType
 };
 
 export interface HttpClient {

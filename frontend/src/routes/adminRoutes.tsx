@@ -14,6 +14,7 @@ import BooksListPage from "@/modules/book/ui/pages/BooksListPage";
 import BookFormPage from "@/modules/book/ui/pages/BookFormPage";
 import BookDetailsPage from "@/modules/book/ui/pages/BookDetailsPage";
 import BookAssignmentPage from "@/modules/book/ui/pages/BookAssignmentPage";
+import LoanManagementPage from "@/modules/book/ui/pages/LoanManagementPage";
 
 
 
@@ -80,7 +81,14 @@ export const adminRoutes: SidebarRoute[] = [
       },  
       {
         path: "books/assign/edit/:id",
-        element: BookAssignmentPage
+        element: BookAssignmentPage,
+        showInSidebar: false
+      },  
+      {
+        path: "books/loans",
+        element: LoanManagementPage,
+        showInSidebar: true,
+        label: "Administrar préstamos"
       },  
     ]
   }
