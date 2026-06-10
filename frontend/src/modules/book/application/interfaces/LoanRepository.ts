@@ -11,5 +11,6 @@ export interface LoanRepository {
 
     getLoansByUser(userId: number, signal?: AbortSignal): Promise<Loan[]>;
     getLoansByBook(bookId: number, signal?: AbortSignal): Promise<Loan[]>;
+    getAuthUserLoans(signal?: AbortSignal): Promise<Loan[]>;
     getLoansReport(params: ReportExportParams, signal?: AbortSignal): Promise<Blob>;
 }

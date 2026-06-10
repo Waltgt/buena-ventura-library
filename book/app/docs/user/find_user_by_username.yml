@@ -2,6 +2,11 @@ tags:
   - Users
 summary: Busca un usuario por su nombre de usuario
 parameters:
+  - name: X-Username
+    in: header
+    type: string
+    required: true
+    description: Usuario que realiza la petición (debe tener rol Gestor o Administrador)
   - name: username
     in: path
     type: string

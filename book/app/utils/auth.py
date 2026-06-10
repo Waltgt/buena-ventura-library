@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, jsonify
+from flask import request, jsonify, g
 from app.repositories.user_repository import UserRepository
 
 
@@ -8,6 +8,7 @@ def roles_required(*allowed_roles):
         @wraps(f)
         def wrapper(*args, **kwargs):
             user_name = request.headers.get('X-Username')
+
             if not user_name:
                 return jsonify({
                     'success': False,
@@ -16,6 +17,7 @@ def roles_required(*allowed_roles):
                 }), 401
 
             user = UserRepository.get_user_by_username(user_name)
+
             if not user:
                 return jsonify({
                     'success': False,
@@ -30,7 +32,8 @@ def roles_required(*allowed_roles):
                     'message': 'Se requiere rol Gestor o Administrador'
                 }), 403
 
-            request.current_user = user
+            g.current_user = user
+
             return f(*args, **kwargs)
         return wrapper
     return decorator

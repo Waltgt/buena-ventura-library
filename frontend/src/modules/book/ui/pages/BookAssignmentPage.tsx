@@ -21,6 +21,7 @@ import type { LoanRequestParams } from "../../types/LoanTypes";
 import { useAuthStore } from "@/modules/auth/store/authStore";
 import { useCreateLoan } from "../../hooks/loans/useCreateLoan";
 import { HttpError } from "@/shared/errors/HttpError";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 type FormState = {
   user: DataListOption<User> | null;
@@ -173,6 +174,7 @@ const BookAssignmentPage = () => {
 
           <Button
             label="Volver"
+            icon={faArrowLeft}
             color="gray"
             variant="outline"
             onClick={() => navigate(-1)}

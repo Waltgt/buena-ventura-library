@@ -8,6 +8,7 @@ from flasgger import swag_from
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 
 @user_bp.route('/<user_name>', methods=['GET'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/validate_admin_user.yml')
 def validate_admin_user(user_name):
     try:
@@ -25,6 +26,7 @@ def validate_admin_user(user_name):
         }), 500
 
 @user_bp.route('/findByUsername/<username>', methods=['GET'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/find_user_by_username.yml')
 def find_user_by_username(username):
     try:
@@ -52,7 +54,7 @@ def find_user_by_username(username):
         }), 500
         
 @user_bp.route('/', methods=['POST'])
-# @roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/create_user.yml')
 def create_user():
     try:
@@ -116,6 +118,7 @@ def update_user():
         }), 500
 
 @user_bp.route('/', methods=['GET'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/get_all_users.yml')
 def get_all_users():
     try:

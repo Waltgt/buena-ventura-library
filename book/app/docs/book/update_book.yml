@@ -1,12 +1,17 @@
 tags:
   - Books
+
 summary: Actualiza los datos de un libro existente
+
 description: Solo usuarios con rol Gestor o Administrador. Requiere el header X-Username.
+
 parameters:
   - name: X-Username
     in: header
     type: string
     required: true
+    description: Usuario que realiza la petición
+
   - name: body
     in: body
     required: true
@@ -35,6 +40,7 @@ parameters:
           type: integer
         id_editorial:
           type: integer
+
 responses:
   200:
     description: Libro actualizado exitosamente
@@ -46,38 +52,50 @@ responses:
           example: true
         data:
           type: object
-          properties:
-            id_book:
-              type: integer
-            isbn:
-              type: string
-            title:
-              type: string
-            publication_date:
-              type: string
-            stock:
-              type: integer
-            status:
-              type: string
-            author:
-              type: object
-              properties:
-                id:
-                  type: integer
-                name:
-                  type: string
-            editorial:
-              type: object
-              properties:
-                id:
-                  type: integer
-                name:
-                  type: string
         message:
           type: string
-          example: Book updated successfully
+          example: Libro actualizado exitosamente
+
   400:
     description: Datos inválidos o el libro no existe
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        error_type:
+          type: string
+
+  401:
+    description: Falta el header X-Username o el usuario no existe
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+
+  403:
+    description: El usuario no tiene rol Gestor o Administrador
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+
+  500:
+    description: Error interno del servidor
     schema:
       type: object
       properties:
