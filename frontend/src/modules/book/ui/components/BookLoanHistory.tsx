@@ -1,67 +1,42 @@
 import { useMemo, useState } from "react";
-
 import Button from "@/shared/components/forms/Button";
+import Skeleton from "@/shared/components/Skeleton";
 
-type Loan = {
-  id_loan: number;
-  user_loan_name: string;
-  delivery_date: string;
-  expected_return_date: string;
-  real_return_date: string | null;
-  status_code: string;
-};
+import { LoanStatusMap } from "../../types/LoanTypes";
+import type { Loan } from "../../domain/entities/Loan";
+import { useLoanBookHistory } from "../../hooks/loans/useLoanBookHistory";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
-  loans?: Loan[];
+  bookId: number;
 };
-
-const BookLoanHistory: Loan[] = Array.from({ length: 20 }).map((_, i) => ({
-  id_loan: i + 1,
-  user_loan_name: `Usuario ${i + 1}`,
-  delivery_date: "2026-01-01",
-  expected_return_date: "2026-01-10",
-  real_return_date: i % 3 === 0 ? "2026-01-09" : null,
-  status_code: i % 3 === 0 ? "DEV" : "ACT"
-}));
 
 const formatDate = (d?: string | null) =>
   d ? new Date(d).toLocaleDateString() : "-";
 
-const resolveStatus = (loan: Loan) => {
-  if (loan.status_code === "DEV") return "Devuelto";
-
-  const today = new Date();
-  const due = new Date(loan.expected_return_date);
-
-  if (!loan.real_return_date && today > due) return "Vencido";
-
-  return "Activo";
-};
-
-const getStatusClass = (s: string) => {
-  switch (s) {
-    case "Activo": return "text-blue-600";
-    case "Devuelto": return "text-slate-500";
-    case "Vencido": return "text-yellow-600";
-    default: return "";
-  }
+const getStatusClass = (status: Loan["status"]) => {
+  if (status === "ACT") return "text-blue-600";
+  if (status === "DEV") return "text-slate-500";
+  if (status === "VENC") return "text-yellow-600";
+  return "";
 };
 
 const PAGE_SIZE = 5;
 
-const BookLoanHistoryCards = ({ loans }: Props) => {
+const BookLoanHistoryCards = ({ bookId }: Props) => {
 
+  const navigate = useNavigate()
   const [page, setPage] = useState(1);
 
-  const data = useMemo(() => {
-    const source = loans?.length ? loans : BookLoanHistory;
+  const { data: loans, isLoading } = useLoanBookHistory(bookId);
 
-    return source.map((l) => ({
+  const data = useMemo(() => {
+    if (!loans) return [];
+
+    return loans.map((l) => ({
       ...l,
-      status: resolveStatus(l),
-      delivery: formatDate(l.delivery_date),
-      expected: formatDate(l.expected_return_date),
-      returned: formatDate(l.real_return_date)
+      expected: formatDate(l.expectedReturnDate),
+      returned: formatDate(l.realReturnDate),
     }));
   }, [loans]);
 
@@ -71,6 +46,36 @@ const BookLoanHistoryCards = ({ loans }: Props) => {
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <Skeleton width="w-40" height="h-4" />
+          <Skeleton width="w-20" height="h-4" />
+        </div>
+
+        <div className="divide-y divide-slate-100">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="px-5 py-3 flex items-center justify-between"
+            >
+              <div className="flex flex-col gap-2">
+                <Skeleton width="w-32" height="h-4" />
+                <Skeleton width="w-40" height="h-3" />
+              </div>
+
+              <div className="flex flex-col items-end gap-2">
+                <Skeleton width="w-28" height="h-4" />
+                <Skeleton width="w-12" height="h-3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (!data.length) {
     return (
@@ -99,23 +104,23 @@ const BookLoanHistoryCards = ({ loans }: Props) => {
 
         {paginated.map((loan) => (
           <div
-            key={loan.id_loan}
-            className="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
+            key={loan.id}
+            className="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer"
+            onClick={() => navigate(`/admin/loans/detail/${loan.id}`)}
           >
-
             <div className="flex flex-col">
               <span className="text-sm font-medium text-slate-800">
-                {loan.user_loan_name}
+                {loan.user.name}
               </span>
 
               <span className="text-xs text-slate-400">
-                {loan.delivery} → {loan.expected}
+                Retorno esperado: {loan.expected} → Retorno real: {loan.returned}
               </span>
             </div>
 
             <div className="text-right">
               <span className={`text-xs font-semibold ${getStatusClass(loan.status)}`}>
-                {loan.status}
+                {LoanStatusMap[loan.status]}
               </span>
 
               <div className="text-xs text-slate-400">

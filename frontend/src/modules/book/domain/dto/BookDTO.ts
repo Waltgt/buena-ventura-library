@@ -10,10 +10,11 @@ export type BookRequestDTO = {
 }
 
 export type BookResponseDTO = {
-    id_book?: number;
+    author_name: string;
+    editorial_name: string;
     id_author: number;
+    id_book?: number;
     id_editorial: number;
-    editoral_name: string;
     isbn: string;
     publication_date: string;
     status: string;

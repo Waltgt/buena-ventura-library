@@ -1,6 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Button from "@/shared/components/forms/Button";
+import Skeleton from "@/shared/components/Skeleton";
+
+import BookLoanHistory from "../components/BookLoanHistory";
+import { useBookById } from "../../hooks/books/useBookById";
+import { BOOK_STATUS } from "../../types/BookTypes";
 
 import {
   faArrowLeft,
@@ -10,27 +15,92 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import BookLoanHistory from "../components/BookLoanHistory";
+
 
 const BookDetailsPage = () => {
 
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const book = {
-    id: 1,
-    isbn: "978-84-376-0494-7",
-    title: "Cien Años de Soledad",
-    author: "Gabriel García Márquez",
-    editorial: "Sudamericana",
-    publicationDate: "1967-05-30",
-    available: 3,
-    total: 5,
-    restricted: false 
-  };
+  const { data: bookData, isLoading } = useBookById(Number(id));
 
-  const isAvailable = book.available > 0;
 
-  const canAssign = isAvailable && !book.restricted;
+  if (isLoading) {
+    return (
+      <div className="p-6 lg:p-8 bg-slate-50 min-h-screen space-y-6">
+
+        <div className="flex justify-between items-start">
+          <div className="space-y-2">
+            <Skeleton width="w-64" height="h-6" />
+            <Skeleton width="w-40" height="h-4" />
+            <Skeleton width="w-24" height="h-6" />
+          </div>
+
+          <div className="flex gap-3">
+            <Skeleton width="w-24" height="h-10" />
+            <Skeleton width="w-24" height="h-10" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-white p-5 rounded-2xl shadow-sm">
+              <Skeleton width="w-20" height="h-4" />
+              <Skeleton width="w-32" height="h-5" className="mt-2" />
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+          <div className="xl:col-span-2 space-y-6">
+            <div className="bg-white rounded-2xl p-6 space-y-4">
+              <Skeleton width="w-48" height="h-5" />
+
+              {[...Array(4)].map((_, i) => (
+                <div key={i}>
+                  <Skeleton width="w-20" height="h-3" />
+                  <Skeleton width="w-40" height="h-4" className="mt-1" />
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 space-y-3">
+              <Skeleton width="w-40" height="h-5" />
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} height="h-4" />
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-5">
+            <div className="bg-white rounded-2xl p-5 space-y-3">
+              <Skeleton width="w-32" height="h-5" />
+              <Skeleton width="w-full" height="h-16" />
+            </div>
+
+            <div className="bg-white rounded-2xl p-5">
+              <Skeleton width="w-full" height="h-10" />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
+  if (!bookData) {
+    return (
+      <div className="p-6">
+        <p className="text-slate-500">Libro no encontrado</p>
+      </div>
+    );
+  }
+
+  const isAvailable = (bookData.stock ?? 0) > 0;
+
+  const canAssign =
+    isAvailable && bookData.status === BOOK_STATUS.AVAILABLE;
 
   const statusStyles = isAvailable
     ? "bg-blue-50 text-blue-700"
@@ -43,11 +113,11 @@ const BookDetailsPage = () => {
 
         <div>
           <h1 className="text-2xl font-semibold text-slate-800">
-            {book.title}
+            {bookData.title}
           </h1>
 
           <p className="text-sm text-slate-500 mt-1">
-            ISBN: {book.isbn}
+            ISBN: {bookData.isbn}
           </p>
 
           <span
@@ -70,7 +140,7 @@ const BookDetailsPage = () => {
             icon={faPen}
             label="Editar"
             color="blue"
-            onClick={() => navigate(`/books/edit/${book.id}`)}
+            onClick={() => navigate(`/admin/books/edit/${bookData.id}`)}
           />
         </div>
 
@@ -78,33 +148,31 @@ const BookDetailsPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-5 rounded-2xl shadow-sm">
           <p className="text-sm text-slate-400">Autor</p>
           <p className="font-medium text-slate-700">
-            {book.author}
+            {bookData.author.name}
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-5 rounded-2xl shadow-sm">
           <p className="text-sm text-slate-400">Editorial</p>
           <p className="font-medium text-slate-700">
-            {book.editorial}
+            {bookData.editorial.name}
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-5 rounded-2xl shadow-sm">
           <p className="text-sm text-slate-400">Publicación</p>
           <p className="font-medium text-slate-700">
-            {book.publicationDate}
+            {bookData.publicationDate}
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-          <p className="text-sm text-slate-400">
-            Disponibles
-          </p>
+        <div className="bg-white p-5 rounded-2xl shadow-sm">
+          <p className="text-sm text-slate-400">Disponibles</p>
           <p className="text-xl font-semibold text-slate-800">
-            {book.available} / {book.total}
+            {bookData.stock}
           </p>
         </div>
 
@@ -114,59 +182,34 @@ const BookDetailsPage = () => {
 
         <div className="xl:col-span-2 space-y-6">
 
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+          <div className="bg-white rounded-2xl p-6">
 
             <div className="flex items-center gap-2 mb-4">
-              <FontAwesomeIcon icon={faBook} className="text-blue-600"/>
+              <FontAwesomeIcon icon={faBook} className="text-blue-600" />
               <h2 className="text-lg font-semibold text-slate-700">
                 Información del libro
               </h2>
             </div>
 
             <div className="space-y-4">
-
-              <div>
-                <p className="text-xs text-slate-400">Título</p>
-                <p className="font-medium text-slate-700">
-                  {book.title}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-400">Autor</p>
-                <p className="font-medium text-slate-700">
-                  {book.author}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-400">Editorial</p>
-                <p className="font-medium text-slate-700">
-                  {book.editorial}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-400">Fecha publicación</p>
-                <p className="font-medium text-slate-700">
-                  {book.publicationDate}
-                </p>
-              </div>
-
+              <p><strong>Título:</strong> {bookData.title}</p>
+              <p><strong>Autor:</strong> {bookData.author.name}</p>
+              <p><strong>Editorial:</strong> {bookData.editorial.name}</p>
+              <p><strong>Fecha:</strong> {bookData.publicationDate}</p>
             </div>
 
           </div>
 
-          <BookLoanHistory/>
+          <BookLoanHistory bookId={bookData.id} />
 
         </div>
 
         <div className="space-y-5">
 
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+          <div className="bg-white rounded-2xl p-5">
 
             <div className="flex items-center gap-2 mb-3">
-              <FontAwesomeIcon icon={faUser} className="text-blue-600"/>
+              <FontAwesomeIcon icon={faUser} className="text-blue-600" />
               <h2 className="font-semibold text-slate-700">
                 Estado
               </h2>
@@ -192,7 +235,7 @@ const BookDetailsPage = () => {
               </div>
             )}
 
-            {book.restricted && (
+            {bookData.status === BOOK_STATUS.LOANED && (
               <div className="mt-3 bg-yellow-50 border border-yellow-100 rounded-xl p-4">
                 <p className="text-yellow-700 font-medium">
                   Restringido
@@ -206,17 +249,15 @@ const BookDetailsPage = () => {
           </div>
 
           {canAssign && (
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-
+            <div className="bg-white rounded-2xl p-5">
               <Button
                 label="Asignar libro"
                 color="blue"
                 className="w-full"
                 onClick={() =>
-                  navigate(`/loans/assign?book=${book.id}`)
+                  navigate(`/admin/loans/assign`)
                 }
               />
-
             </div>
           )}
 

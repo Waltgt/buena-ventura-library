@@ -6,10 +6,13 @@ import type {
 export function bookToDomain(dto: BookResponseDTO): Book {
   return {
     id: dto.id_book ?? 0,
-    authorId: dto.id_author,
+    author: {
+      id: dto.id_author,
+      name: dto.author_name
+    },
     editorial: {
       id: dto.id_editorial,
-      name: dto.editoral_name
+      name: dto.editorial_name
     },
     isbn: dto.isbn,
     publicationDate: dto.publication_date,

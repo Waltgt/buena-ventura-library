@@ -1,5 +1,5 @@
-export const adminAccessRoles = ["Administrador"] as const;
-export const userAccessRoles = ["Gestor"] as const;
+export const adminAccessRoles = ["Administrador", "Gestor"] as const;
+export const userAccessRoles = ["Usuario"] as const;
 
 export type AdminRole = typeof adminAccessRoles[number];
 export type UserRole = typeof userAccessRoles[number];

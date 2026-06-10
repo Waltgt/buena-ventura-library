@@ -15,7 +15,6 @@ import {
   adminAccessRoles,
   userAccessRoles,
 } from "@/shared/types/auth/RolesTypes";
-import { PERMISSIONS } from "@/shared/utils/permissions";
 
 const renderAdminRoutes = (routes: any[]) =>
   routes.flatMap((r) => {
@@ -53,7 +52,6 @@ const renderAdminRoutes = (routes: any[]) =>
   });
 
 export const AppRoutes = () => {
-  console.log(PERMISSIONS)
   return (
     <Routes>
       <Route element={<PublicRoute />}>

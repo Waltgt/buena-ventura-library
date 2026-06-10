@@ -33,7 +33,7 @@ export function createBookRepository(http: HttpClient): BookRepository {
         },
         async getBookById(id, signal) {
             const dto = await http.request<ApiResponse<BookResponseDTO>>({
-                url: `${API_ROUTES.USER_ENDPOINT}/${id}`,
+                url: `${API_ROUTES.BOOK_ENDPOINT}/${id}`,
                 method: "GET",
                 signal,
             });
@@ -52,7 +52,7 @@ export function createBookRepository(http: HttpClient): BookRepository {
                 title: params.title
             };
             const dto = await http.request<ApiResponse<BookResponseDTO>>({
-                url: API_ROUTES.USER_ENDPOINT,
+                url: API_ROUTES.BOOK_ENDPOINT,
                 method: "POST",
                 body,
                 ...withUserHeader(),
@@ -76,7 +76,7 @@ export function createBookRepository(http: HttpClient): BookRepository {
                 title: params.title
             };
             const dto = await http.request<ApiResponse<BookResponseDTO>>({
-                url: API_ROUTES.USER_ENDPOINT,
+                url: API_ROUTES.BOOK_ENDPOINT,
                 method: "PUT",
                 body,
                 ...withUserHeader(),
@@ -90,7 +90,7 @@ export function createBookRepository(http: HttpClient): BookRepository {
         async removeBook(id, signal) {
 
             const dto = await http.request<ApiResponse<BookResponseDTO>>({
-                url: `${API_ROUTES.USER_ENDPOINT}/${id}`,
+                url: `${API_ROUTES.BOOK_ENDPOINT}/${id}`,
                 method: "DELETE",
                 ...withUserHeader(),
                 withCredentials: false,

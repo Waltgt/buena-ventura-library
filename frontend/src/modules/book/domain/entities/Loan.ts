@@ -1,8 +1,10 @@
+import type { LoanStatusCode } from "../../types/LoanTypes";
+
 export type Loan = {
     id: number;
     expectedReturnDate: string;
     realReturnDate: string;
-    status: string;
+    status: LoanStatusCode
     book: {
         title: string;
         id: number;
