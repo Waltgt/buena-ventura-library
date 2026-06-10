@@ -90,7 +90,7 @@ export function createApiClient(baseUrl = "") {
       if (!contentType.includes("application/json")) {
         throw new HttpError(res.status, "Expected JSON response");
       }
-
+      
       return (await res.json()) as T;
 
     },
