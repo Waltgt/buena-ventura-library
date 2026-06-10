@@ -17,7 +17,7 @@ def get_all_loans():
         'success': True,
         'data': loans_data,
         'count': len(loans_data),
-        'message': 'Loans retrieved successfully'
+        'message': 'Préstamos obtenidos exitosamente'
     }), 200
 
 @loan_bp.route('/<int:loan_id>', methods=['GET'])
@@ -30,13 +30,13 @@ def get_loan_by_id(loan_id):
             'success': True,
             'data': loan.to_dict(),
             'count': 1,
-            'message': 'Loan retrieved successfully'
+            'message': 'Préstamo encontrado exitosamente'
         }), 200
     return jsonify({
         'success': True,
         'data': [],
         'count': 0,
-        'message': 'No loan found with the given ID: ' + str(loan_id)
+        'message': 'No se encontró un préstamo con el ID: ' + str(loan_id)
     }), 200
 
 @loan_bp.route('', methods=['POST'])
@@ -52,7 +52,7 @@ def create_loan():
         return jsonify({
             'success': True,
             'data': new_loan.to_dict(),
-            'message': 'Loan created successfully'
+            'message': 'Préstamo creado exitosamente'
         }), 201
 
     except BadRequest as e:
@@ -91,7 +91,7 @@ def return_loan(loan_id):
         return jsonify({
             'success': True,
             'data': loan.to_dict(),
-            'message': 'Loan returned successfully'
+            'message': 'Préstamo devuelto exitosamente'
         }), 200
 
     except BadRequest as e:

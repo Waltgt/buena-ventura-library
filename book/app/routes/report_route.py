@@ -53,7 +53,7 @@ def search_loans():
             'success': True,
             'data': loans_data,
             'count': len(loans_data),
-            'message': 'Report generated successfully'
+            'message': 'Reporte generado exitosamente'
         }), 200
 
     except Exception as e:
@@ -92,7 +92,7 @@ def get_loans_by_book(book_id):
             'success': True,
             'data': loans_data,
             'count': len(loans_data),
-            'message': 'Loan history by book retrieved successfully'
+            'message': 'Historial de préstamos por libro obtenido exitosamente'
         }), 200
 
     except Exception as e:
@@ -131,7 +131,7 @@ def get_loans_by_user(user_id):
             'success': True,
             'data': loans_data,
             'count': len(loans_data),
-            'message': 'Loans by user retrieved successfully'
+            'message': 'Préstamos por usuario obtenidos exitosamente'
         }), 200
 
     except Exception as e:
