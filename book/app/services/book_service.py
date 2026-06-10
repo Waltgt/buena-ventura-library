@@ -30,7 +30,7 @@ class BookService:
             return book_created
         except Exception as e:
             current_app.logger.error(f'Error al crear libro: {str(e)}')
-            raise BadRequest('Book creation failed: ' + str(e))
+            raise BadRequest('Error al crear libro: ' + str(e))
     
     def map_book_from_request(self, book_data):
         book = Book(
@@ -47,27 +47,27 @@ class BookService:
     
     def validate_isbn(self, book):
         if not book.isbn:
-            raise BadRequest("ISBN is required")
+            raise BadRequest("ISBN es requerido")
         
         book_with_same_isbn = BookRepository.get_book_by_isbn(book.isbn)
         if book_with_same_isbn:
-            raise BadRequest("A book with the same ISBN already exists")
+            raise BadRequest("Un libro con el mismo ISBN ya existe")
 
     def validate_book(self, book):
         if not book:
-            raise BadRequest("Book data is required")
+            raise BadRequest("La información del libro es requerida")
         if not book.isbn:
-            raise BadRequest("ISBN is required")
+            raise BadRequest("ISBN es requerida")
         if not book.title:
-            raise BadRequest("Title is required")
+            raise BadRequest("Titulo es requerida")
         if not book.publication_date:
-            raise BadRequest("Publication date is required")
+            raise BadRequest("Fecha de publicación es requerida")
         if book.stock is None or book.stock < 0:
-            raise BadRequest("Stock is required and cannot be negative")
+            raise BadRequest("El stock es requerido y no puede ser negativo")
         if not book.id_author:
-            raise BadRequest("Author ID is required")
+            raise BadRequest("El ID del autor es requerido")
         if not book.id_editorial:
-            raise BadRequest("Editorial ID is required")
+            raise BadRequest("El ID de la editorial es requerido")
         
     def update_book(self, book_data):
         try:
@@ -83,11 +83,11 @@ class BookService:
             raise
         except Exception as e:
             current_app.logger.error(f'Error updating book: {str(e)}')
-            raise BadRequest('Book update failed: ' + str(e))
+            raise BadRequest('Error al actualizar el libro: ' + str(e))
 
     def delete_book(self, book_id):
         try:
             BookRepository.delete_book(book_id)
         except Exception as e:
             current_app.logger.error(f'Error deleting book: {str(e)}')
-            raise BadRequest('Book deletion failed: ' + str(e))
+            raise BadRequest('Error al eliminar el libro: ' + str(e))
