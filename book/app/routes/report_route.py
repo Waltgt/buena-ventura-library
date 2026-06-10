@@ -13,27 +13,39 @@ def _is_csv_requested():
 
 def _csv_response(loans, filename):
     report_service = ReportService()
+
     csv_content = report_service.build_loans_csv(loans)
+
     return Response(
         csv_content,
         mimetype='text/csv; charset=utf-8',
-        headers={'Content-Disposition': f'attachment; filename={filename}'}
+        headers={
+            'Content-Disposition': f'attachment; filename={filename}'
+        }
     )
+
 
 @report_bp.route('/loans', methods=['GET'])
 @roles_required(RolName.ADMIN.value)
 @swag_from('../docs/report/search_loans.yml')
 def search_loans():
     try:
-        isbn = request.args.get('isbn')
-        title = request.args.get('title')
-        user = request.args.get('user')
+
+        filters = {
+            "isbn": request.args.get("isbn"),
+            "title": request.args.get("title"),
+            "user": request.args.get("user")
+        }
 
         report_service = ReportService()
-        loans = report_service.search_loans(isbn=isbn, title=title, user=user)
+
+        loans = report_service.search_loans(**filters)
 
         if _is_csv_requested():
-            return _csv_response(loans, 'reporte_prestamos.csv')
+            return _csv_response(
+                loans,
+                'reporte_prestamos.csv'
+            )
 
         loans_data = [loan.to_dict() for loan in loans]
 
@@ -45,7 +57,11 @@ def search_loans():
         }), 200
 
     except Exception as e:
-        current_app.logger.error(f"Error generating loan report: {str(e)}")
+
+        current_app.logger.error(
+            f"Error generating loan report: {str(e)}"
+        )
+
         return jsonify({
             'success': False,
             'error': 'Internal server error',
@@ -53,16 +69,22 @@ def search_loans():
             'error_type': 'InternalError'
         }), 500
 
+
 @report_bp.route('/loans/book/<int:book_id>', methods=['GET'])
 @roles_required(RolName.ADMIN.value)
 @swag_from('../docs/report/get_loans_by_book.yml')
 def get_loans_by_book(book_id):
     try:
+
         report_service = ReportService()
+
         loans = report_service.get_loans_by_book(book_id)
 
         if _is_csv_requested():
-            return _csv_response(loans, f'reporte_libro_{book_id}.csv')
+            return _csv_response(
+                loans,
+                f'reporte_libro_{book_id}.csv'
+            )
 
         loans_data = [loan.to_dict() for loan in loans]
 
@@ -74,7 +96,11 @@ def get_loans_by_book(book_id):
         }), 200
 
     except Exception as e:
-        current_app.logger.error(f"Error retrieving loan history by book: {str(e)}")
+
+        current_app.logger.error(
+            f"Error retrieving loan history by book: {str(e)}"
+        )
+
         return jsonify({
             'success': False,
             'error': 'Internal server error',
@@ -82,16 +108,22 @@ def get_loans_by_book(book_id):
             'error_type': 'InternalError'
         }), 500
 
+
 @report_bp.route('/loans/user/<int:user_id>', methods=['GET'])
 @roles_required(RolName.ADMIN.value)
 @swag_from('../docs/report/get_loans_by_user.yml')
 def get_loans_by_user(user_id):
     try:
+
         report_service = ReportService()
+
         loans = report_service.get_loans_by_user(user_id)
 
         if _is_csv_requested():
-            return _csv_response(loans, f'reporte_usuario_{user_id}.csv')
+            return _csv_response(
+                loans,
+                f'reporte_usuario_{user_id}.csv'
+            )
 
         loans_data = [loan.to_dict() for loan in loans]
 
@@ -103,7 +135,11 @@ def get_loans_by_user(user_id):
         }), 200
 
     except Exception as e:
-        current_app.logger.error(f"Error retrieving loans by user: {str(e)}")
+
+        current_app.logger.error(
+            f"Error retrieving loans by user: {str(e)}"
+        )
+
         return jsonify({
             'success': False,
             'error': 'Internal server error',

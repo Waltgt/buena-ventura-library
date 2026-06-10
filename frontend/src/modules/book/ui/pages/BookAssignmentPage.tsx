@@ -1,24 +1,30 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
-import { useNavigate, useSearchParams, useParams } from "react-router-dom";
+import { useState, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Button from "@/shared/components/forms/Button";
 import FormField from "@/shared/components/forms/FormField";
 import Input from "@/shared/components/forms/Input";
 import DataList from "@/shared/components/forms/DataList";
 import Toast from "@/shared/components/Toast";
+import Skeleton from "@/shared/components/Skeleton";
 
 import { useToast } from "@/shared/hooks/useToast";
 import { TOAST_TYPES } from "@/shared/types/toast/ToastType";
+import type { DataListOption } from "@/shared/types/datalist/DataListOption";
 
-type Option = {
-  id: string;
-  label: string;
-  subtitle?: string;
-};
+import type { User } from "@/modules/admin/domain/entities/User";
+import type { Book } from "../../domain/entities/Book";
+
+import { useBooks } from "../../hooks/books/useBooks";
+import { useGetUsers } from "@/modules/admin/hooks/user/useGetUsers";
+import type { LoanRequestParams } from "../../types/LoanTypes";
+import { useAuthStore } from "@/modules/auth/store/authStore";
+import { useCreateLoan } from "../../hooks/loans/useCreateLoan";
+import { HttpError } from "@/shared/errors/HttpError";
 
 type FormState = {
-  user: Option | null;
-  book: Option | null;
+  user: DataListOption<User> | null;
+  book: DataListOption<Book> | null;
   returnDate: string;
 };
 
@@ -28,133 +34,127 @@ type FormErrors = {
   returnDate?: string;
 };
 
-const dummyUsers: Option[] = [
-  { id: "1", label: "John Doe", subtitle: "12345678" },
-  { id: "2", label: "Ana López", subtitle: "87654321" },
-  { id: "3", label: "Carlos Pérez", subtitle: "99999999" }
-];
-
-const dummyBooks: Option[] = [
-  { id: "1", label: "Cien Años de Soledad", subtitle: "978-84-376-0494-7" },
-  { id: "2", label: "Don Quijote", subtitle: "978-84-376-0494-8" }
-];
-
 const BookAssignmentPage = () => {
-
   const navigate = useNavigate();
-  const { id } = useParams();
-  const [params] = useSearchParams();
-
-  const isEdit = !!id;
 
   const { toast, showToast, hideToast } = useToast();
+
+  const { data: users = [], isLoading: loadingUsers } = useGetUsers();
+
+  const { data: books = [], isLoading: loadingBooks } =  useBooks();
+
+  const authUser = useAuthStore((state) => state.user); //usuario logeadp
+
+  const createLoan = useCreateLoan()
+
+
+  const userOptions = useMemo<DataListOption<User>[]>(
+    () =>
+      users.map((user) => ({
+        id: user.id,
+        label: user.name,
+        subtitle: user.email,
+        value: user,
+      })),
+    [users]
+  );
+
+  const bookOptions = useMemo<DataListOption<Book>[]>(
+    () =>
+      books.map((book) => ({
+        id: book.id,
+        label: book.title,
+        subtitle: book.isbn,
+        value: book,
+      })),
+    [books]
+  );
 
   const [form, setForm] = useState<FormState>({
     user: null,
     book: null,
-    returnDate: ""
+    returnDate: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
 
-  const bookFromQuery = params.get("book");
-
-  useEffect(() => {
-    if (bookFromQuery && !form.book) {
-      const found = dummyBooks.find((b) => b.id === bookFromQuery);
-      if (found) {
-        setForm((prev) => ({ ...prev, book: found }));
-      }
-    }
-  }, [bookFromQuery]);
-
-  useEffect(() => {
-    if (isEdit) {
-      setForm({
-        user: dummyUsers[0],
-        book: dummyBooks[0],
-        returnDate: "2026-07-01"
-      });
-    }
-  }, [isEdit]);
-
   const validate = useCallback(() => {
-
     const newErrors: FormErrors = {};
 
-    if (!form.user)
+    if (!form.user) {
       newErrors.user = "Seleccione un usuario";
+    }
 
-    if (!form.book)
+    if (!form.book) {
       newErrors.book = "Seleccione un libro";
+    }
 
-    if (!form.returnDate)
+    if (!form.returnDate) {
       newErrors.returnDate = "Fecha requerida";
+    }
 
-    const today = new Date();
-    const selected = new Date(form.returnDate);
+    if (form.returnDate) {
+      const selected = new Date(form.returnDate);
+      const today = new Date();
 
-    if (form.returnDate && selected <= today)
-      newErrors.returnDate = "Debe ser una fecha futura";
+      today.setHours(0, 0, 0, 0);
+
+      if (selected <= today) {
+        newErrors.returnDate =
+          "Debe ser una fecha futura";
+      }
+    }
 
     setErrors(newErrors);
 
-    const isValid = Object.keys(newErrors).length === 0;
-
-    if (!isValid) {
-      showToast("Campos inválidos, revise el formulario.", TOAST_TYPES.ERROR);
+    if (Object.keys(newErrors).length > 0) {
+      showToast(
+        "Campos inválidos, revise el formulario",
+        TOAST_TYPES.ERROR
+      );
+      return false;
     }
 
-    return isValid;
-
-  }, [form]);
+    return true;
+  }, [form, showToast]);
 
   const save = useCallback(async () => {
-
     if (!validate()) return;
 
     setSaving(true);
 
     try {
-
-      const payload = {
-        userId: Number(form.user!.id),
-        bookId: Number(form.book!.id),
-        returnDate: form.returnDate
+      const payload: LoanRequestParams = {
+        delivery_date: new Date().toISOString().split("T")[0],
+        expected_return_date: form.returnDate,
+        id_book: Number(form.book!.id),
+        id_user_loan: Number(form.user!.id),
+        id_user_register: authUser?.id ?? 0
       };
+      await createLoan.mutateAsync(payload)
 
-      if (isEdit) {
-        // await updateLoan.mutateAsync(payload)
-        showToast("Préstamo actualizado", TOAST_TYPES.SUCCESS);
-      } else {
-
-        const userHasBook = false;
-        const bookAvailable = true;
-
-        if (userHasBook) {
-          showToast("El usuario ya tiene un préstamo activo", TOAST_TYPES.ERROR);
-          return;
-        }
-
-        if (!bookAvailable) {
-          showToast("No hay disponibilidad de unidades", TOAST_TYPES.ERROR);
-          return;
-        }
-
-        // await createLoan.mutateAsync(payload)
-        showToast("Préstamo registrado correctamente", TOAST_TYPES.SUCCESS);
-      }
+      showToast(
+        "Préstamo registrado correctamente",
+        TOAST_TYPES.SUCCESS
+      );
 
       setTimeout(() => navigate(-1), 1200);
-
-    } catch (e) {
-      showToast("Error en la operación", TOAST_TYPES.ERROR);
+    } catch(error) {
+      if(error instanceof HttpError) {
+        const errMsg = JSON.parse(error.body)
+        showToast(errMsg.error, TOAST_TYPES.ERROR )
+        return
+      }
+      showToast( "Error al registrar préstamo", TOAST_TYPES.ERROR )
     } finally {
       setSaving(false);
     }
+  }, [form, validate, navigate, showToast]);
 
-  }, [form, validate, isEdit]);
+  const loading =
+    loadingUsers ||
+    loadingBooks;
 
   return (
     <>
@@ -163,13 +163,11 @@ const BookAssignmentPage = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-semibold text-slate-800">
-              {isEdit ? "Extender préstamo" : "Asignación de libro"}
+              Asignación de libro
             </h1>
 
             <p className="text-sm text-slate-500">
-              {isEdit
-                ? "Extensión de fecha de devolución"
-                : "Asignación de libro a usuario"}
+              Asignación de libro a usuario
             </p>
           </div>
 
@@ -183,40 +181,65 @@ const BookAssignmentPage = () => {
 
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-6">
 
-          <FormField label="Usuario" error={errors.user}>
-            <DataList
-              options={dummyUsers}
-              value={form.user}
-              onChange={(v) =>
-                setForm((p) => ({ ...p, user: v }))
-              }
-              placeholder="Buscar usuario"
-              disabled={isEdit}
-            />
-          </FormField>
+          {loading ? (
+            <>
+              <Skeleton height="h-12" />
+              <Skeleton height="h-12" />
+              <Skeleton height="h-12" />
+            </>
+          ) : (
+            <>
+              <FormField
+                label="Usuario"
+                error={errors.user}
+              >
+                <DataList
+                  options={userOptions}
+                  value={form.user}
+                  onChange={(value) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      user: value,
+                    }))
+                  }
+                  placeholder="Buscar usuario"
+                />
+              </FormField>
 
-          <FormField label="Libro" error={errors.book}>
-            <DataList
-              options={dummyBooks}
-              value={form.book}
-              onChange={(v) =>
-                setForm((p) => ({ ...p, book: v }))
-              }
-              placeholder="Buscar libro"
-              disabled={!!bookFromQuery || isEdit}
-            />
-          </FormField>
+              <FormField
+                label="Libro"
+                error={errors.book}
+              >
+                <DataList
+                  options={bookOptions}
+                  value={form.book}
+                  onChange={(value) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      book: value,
+                    }))
+                  }
+                  placeholder="Buscar libro"
+                />
+              </FormField>
 
-          <FormField label="Fecha de devolución" error={errors.returnDate}>
-            <Input
-              type="date"
-              value={form.returnDate}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, returnDate: e.target.value }))
-              }
-            />
-          </FormField>
-
+              <FormField
+                label="Fecha de devolución"
+                error={errors.returnDate}
+              >
+                <Input
+                  type="date"
+                  value={form.returnDate}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      returnDate: e.target.value,
+                    }))
+                  }
+                />
+              </FormField>
+            </>
+          )}
         </div>
 
         <div className="sticky bottom-0 bg-white border border-slate-100 rounded-2xl shadow-sm p-4 flex justify-end gap-3">
@@ -232,17 +255,13 @@ const BookAssignmentPage = () => {
             label={
               saving
                 ? "Guardando..."
-                : isEdit
-                  ? "Actualizar"
-                  : "Asignar"
+                : "Asignar"
             }
             color="blue"
             onClick={save}
-            disabled={saving}
+            disabled={saving || loading}
           />
-
         </div>
-
       </div>
 
       <div className="fixed top-4 right-4 z-[9999]">

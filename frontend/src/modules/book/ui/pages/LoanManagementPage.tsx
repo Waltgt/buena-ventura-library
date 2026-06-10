@@ -25,6 +25,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLoans } from "../../hooks/loans/useLoans";
 import { LoanStatusMap, type LoanStatusCode } from "../../types/LoanTypes";
 import type { Loan } from "../../domain/entities/Loan";
+import { useLoansReport } from "../../hooks/loans/useLoansReport";
+import { downloadBlob } from "@/shared/utils/downloadBlobl";
+import type { ReportExportParams } from "../../types/ReportTypes";
+import { HttpError } from "@/shared/errors/HttpError";
+import { useReturnLoan } from "../../hooks/loans/useReturnLoan";
+
+import CanAccess from "@/shared/components/permissions/CanAccess";
 
 const PAGE_SIZE = 15;
 
@@ -36,7 +43,10 @@ const LoanManagementPage = () => {
   const [selected, setSelected] = useState<Loan | null>(null);
   const [openReturn, setOpenReturn] = useState(false);
 
-  const { data: loans = [], isLoading } = useLoans();
+  const [filters, setFilters] = useState<Partial<ReportExportParams>>({});
+  const exportReport = useLoansReport()
+
+  const { data: loans = [], isLoading, refetch, isRefetching } = useLoans();
 
   const kpis = useMemo(() => {
     const active = loans.filter(l => l.status === "ACT").length;
@@ -99,7 +109,7 @@ const LoanManagementPage = () => {
       visible: (row: any) => row.status !== "DEV"
     },
     {
-      title: "Devolver préstamo de libri",
+      title: "Devolver préstamo de libro",
       label: "Devolver",
       color: BUTTON_COLORS.GREEN,
       icon: faArrowRightToBracket,
@@ -113,13 +123,42 @@ const LoanManagementPage = () => {
 
   ];
 
-  const confirmReturn = () => {
-    showToast("Préstamo actualizado correctamente", TOAST_TYPES.SUCCESS);
-    setOpenReturn(false);
+  const returnBook = useReturnLoan()
+
+  const confirmReturn = async () => {
+    try {
+
+      await returnBook.mutateAsync(selected!.id)
+      showToast("Préstamo actualizado correctamente", TOAST_TYPES.SUCCESS);
+
+    } catch (error) {
+      if (error instanceof HttpError) {
+        const errMsg = JSON.parse(error.body).message
+
+        showToast(errMsg, TOAST_TYPES.ERROR);
+        return
+      }
+      showToast("Error al procecar retorno de libro.", TOAST_TYPES.ERROR);
+    } finally {
+      setOpenReturn(false);
+    }
   };
 
-  const getReport = () => {
-    showToast("Obteniendo reporte", TOAST_TYPES.LOADING)
+  const getReport = async () => {
+    try {
+      showToast("Obteniendo reporte", TOAST_TYPES.LOADING)
+
+      const file = await exportReport.mutateAsync(filters)
+      downloadBlob(file, "reporte_prestamos_libros.csv")
+      hideToast()
+
+      showToast("Reporte exportado exitosamente", TOAST_TYPES.SUCCESS)
+
+    } catch (error) {
+      hideToast();
+
+      showToast("Error al generar el reporte", TOAST_TYPES.ERROR)
+    }
   }
 
 
@@ -137,14 +176,16 @@ const LoanManagementPage = () => {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button
+            <CanAccess role="Administrador">
+              <Button
 
-              icon={faFileExcel}
-              label="Exportar"
-              title="Exportar a excel"
-              color="green"
-              onClick={getReport}
-            />
+                icon={faFileExcel}
+                label="Exportar"
+                title="Exportar a excel"
+                color="green"
+                onClick={getReport}
+              />
+            </CanAccess>
             <Button
               label="Nuevo préstamo"
               icon={faAdd}
@@ -200,7 +241,8 @@ const LoanManagementPage = () => {
 
             <Button
               icon={faRotate}
-              label="Actualizar"
+              label={isRefetching ? "Actualizando..." : "Actualizar"}
+              onClick={refetch}
               color="gray"
               variant="outline"
             />
@@ -215,6 +257,9 @@ const LoanManagementPage = () => {
             total={loans.length}
             onPageChange={setPage}
             loading={isLoading}
+            onFiltersChange={(f) =>
+              setFilters(f as ReportExportParams)
+            }
           />
         </div>
 

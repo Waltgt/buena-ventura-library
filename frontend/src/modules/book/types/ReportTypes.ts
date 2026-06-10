@@ -1,5 +1,5 @@
 export type ReportExportParams = {
     isbn?: string;
-    title?: string;
+    book?: string;
     user?: string;
 }

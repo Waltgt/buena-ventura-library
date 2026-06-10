@@ -15,7 +15,6 @@ import {
   adminAccessRoles,
   userAccessRoles,
 } from "@/shared/types/auth/RolesTypes";
-import { PERMISSIONS } from "@/shared/utils/permissions";
 
 const renderAdminRoutes = (routes: any[]) =>
   routes.flatMap((r) => {

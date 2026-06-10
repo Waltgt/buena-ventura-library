@@ -3,7 +3,7 @@ import { loanRepository } from "../../infrastructure/repositories/LoanRepository
 
 export const useLoans = () => {
   return useQuery({
-    queryKey: ["book"],
+    queryKey: ["loans"],
     queryFn: async ({ signal }) => {
       return await loanRepository.getAllLoans(signal)
     },

@@ -51,7 +51,37 @@ class LoanRepository:
             Loan.delivery_date >= start,
             Loan.delivery_date < end
         ).first()
+    @staticmethod
+    def search_loans(isbn=None, title=None, user=None):
 
+        query = Loan.query
+
+        if isbn:
+            query = (
+                query
+                .join(Book, Loan.id_book == Book.id_book)
+                .filter(Book.isbn.ilike(f"%{isbn}%"))
+            )
+
+        if title:
+            query = (
+                query
+                .join(Book, Loan.id_book == Book.id_book)
+                .filter(Book.title.ilike(f"%{title}%"))
+            )
+
+        if user:
+            query = (
+                query
+                .join(User, Loan.id_user_loan == User.id_user)
+                .filter(
+                    (User.customer_name.ilike(f"%{user}%"))
+                    |
+                    (User.customer_last_name.ilike(f"%{user}%"))
+                )
+            )
+
+        return query.all()
     @staticmethod
     def create_loan(loan, book):
         try:

@@ -46,7 +46,7 @@ export function createLoanRepository(http: HttpClient): LoanRepository {
 
             const body: LoanRequestDTO = { ...params }
             const dto = await http.request<ApiResponse<LoanResponseDTO>>({
-                url: API_ROUTES.USER_ENDPOINT,
+                url: API_ROUTES.LOAN_ENDPOINT,
                 method: "POST",
                 body,
                 ...withUserHeader(),
@@ -62,7 +62,7 @@ export function createLoanRepository(http: HttpClient): LoanRepository {
 
             const dto = await http.request<ApiResponse<LoanResponseDTO>>({
                 url: API_ROUTES.LOAN_RETURN(id),
-                method: "DELETE",
+                method: "PUT",
                 ...withUserHeader(),
                 withCredentials: false,
                 timeoutMs: 15_000,
@@ -98,7 +98,7 @@ export function createLoanRepository(http: HttpClient): LoanRepository {
 
             const query : LoanReportRequestDTO = {
                 isbn: params.isbn,
-                title: params.title,
+                title: params.book,
                 user: params.user,
                 format: "csv"
             }
@@ -106,7 +106,7 @@ export function createLoanRepository(http: HttpClient): LoanRepository {
             const queryString = buildQuery(query)
 
             const file = await http.request<Blob>({
-                url: `${API_ROUTES.LOAN_REPORT}/${queryString}`,
+                url: `${API_ROUTES.LOAN_REPORT}?${queryString}`,
                 method: "GET",
                 responseType: "blob",
                 ...withUserHeader(),
