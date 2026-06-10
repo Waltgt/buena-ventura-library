@@ -13,6 +13,12 @@ parameters:
     type: integer
     required: true
     description: ID del libro del cual se consulta el historial
+  - name: format
+    in: query
+    type: string
+    required: false
+    enum: [json, csv]
+    description: Formato de salida. Por defecto JSON; con 'csv' descarga un archivo.
 responses:
   200:
     description: Historial obtenido exitosamente
@@ -36,6 +42,12 @@ responses:
               isbn:
                 type: string
                 example: "978-3-16-148410-0"
+              editorial_name:
+                type: string
+                example: Sudamericana
+              author_name:
+                type: string
+                example: Gabriel García Márquez
               user_loan_name:
                 type: string
                 example: John Doe

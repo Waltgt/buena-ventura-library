@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from app.config.settings import DevelopmentConfig
@@ -12,16 +12,47 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(DevelopmentConfig)
+    app.url_map.strict_slashes = False
+
     app.config['SWAGGER'] = {
         'title': 'BuenaVentura API',
         'uiversion': 3,
         'version': '1.0.0',
         'description': 'API del sistema de gestión de biblioteca BuenaVentura'
     }
+
     Swagger(app)
     db.init_app(app)
-    CORS(app)
-    
+
+    cors_origin = app.config.get("CORS_ORIGIN", "http://localhost:5173")
+
+    CORS(
+        app,
+        origins=[cors_origin],
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization", "X-Username"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    )
+
+    @app.before_request
+    def handle_preflight():
+        if request.method == "OPTIONS":
+            response = app.make_default_options_response()
+            headers = response.headers
+
+            headers["Access-Control-Allow-Origin"] = cors_origin
+            headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,X-Username"
+            headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+
+            return response
+
+    @app.after_request
+    def after_request(response):
+        response.headers["Access-Control-Allow-Origin"] = cors_origin
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,X-Username"
+        response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+        return response
+
     from app.routes.book_route import book_bp
     from app.routes.user_route import user_bp
     from app.routes.loan_route import loan_bp
@@ -87,6 +118,3 @@ def create_app():
         return datetime.utcnow().isoformat()
 
     return app
-
-    
-    

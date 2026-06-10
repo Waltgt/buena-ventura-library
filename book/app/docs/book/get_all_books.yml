@@ -17,34 +17,33 @@ responses:
             properties:
               id_book:
                 type: integer
-                example: 1
               isbn:
                 type: string
-                example: "978-3-16-148410-0"
               title:
                 type: string
-                example: Cien años de soledad
               publication_date:
                 type: string
-                example: "1967-05-30"
               stock:
                 type: integer
-                example: 5
-              id_author:
-                type: integer
-                example: 1
-              id_editorial:
-                type: integer
-                example: 1
-              author_name:
+              status:
                 type: string
-                example: Gabriel García Márquez
-              editorial_name:
-                type: string
-                example: Sudamericana
+                enum: [disponible, prestado]
+              author:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+              editorial:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
         count:
           type: integer
-          example: 10
         message:
           type: string
           example: Books retrieved successfully

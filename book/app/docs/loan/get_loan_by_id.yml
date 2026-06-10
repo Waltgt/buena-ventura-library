@@ -31,6 +31,12 @@ responses:
             isbn:
               type: string
               example: "978-3-16-148410-0"
+            editorial_name:
+              type: string
+              example: Sudamericana
+            author_name:
+              type: string
+              example: Gabriel García Márquez
             id_user_loan:
               type: integer
               example: 2
