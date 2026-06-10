@@ -248,19 +248,6 @@ const BookDetailsPage = () => {
 
           </div>
 
-          {canAssign && (
-            <div className="bg-white rounded-2xl p-5">
-              <Button
-                label="Asignar libro"
-                color="blue"
-                className="w-full"
-                onClick={() =>
-                  navigate(`/admin/loans/assign`)
-                }
-              />
-            </div>
-          )}
-
         </div>
 
       </div>
