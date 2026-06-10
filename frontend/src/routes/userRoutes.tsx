@@ -1,9 +1,9 @@
 import {
-  faChartLine,
-  faCalendarDays,
+  faAddressBook,
 } from "@fortawesome/free-solid-svg-icons";
 
 import type { SidebarRoute } from "@/shared/types/sidebar/sidebarRoute";
+import ClientLoansPage from "@/modules/book/ui/pages/ClientLoansPage";
 
 const DummyPage = ({
   title,
@@ -22,39 +22,9 @@ const DummyPage = ({
 export const userRoutes: SidebarRoute[] = [
   {
     path: "/app",
-
-    element: () => (
-      <DummyPage title="Inicio Usuario" />
-    ),
-
-    label: "Dashboard",
-
-    icon: faChartLine,
-
+    element: ClientLoansPage,
+    label: "Mis préstamo",
+    icon: faAddressBook,
     showInSidebar: true,
-  },
-
-  {
-    label: "Mi Cuenta",
-
-    icon: faCalendarDays,
-
-    showInSidebar: true,
-
-    children: [
-      {
-        path: "/app/my-appointments",
-
-        element: () => (
-          <DummyPage title="Mis Citas" />
-        ),
-
-        label: "Mis Citas",
-
-        permissions: [
-          "appointments.self.view",
-        ],
-      },
-    ],
-  },
+  }
 ];

@@ -39,7 +39,6 @@ export const adminRoutes: SidebarRoute[] = [
   {
     path: "/admin",
     element: DashboardPage,
-    // index: true,
     label: "Dashboard",
     icon: faChartLine,
     showInSidebar: true,

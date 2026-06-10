@@ -10,6 +10,7 @@ export const API_ROUTES = {
   LOAN_ENDPOINT: '/api/loan',
   LOAN_REPORT: '/api/report/loans',
   LOAN_GET_ALL_BY_USER: '/api/report/loans/user',
+  LOAN_GET_ME: '/api/report/loans/me',
   LOAN_GET_ALL_BY_BOOK: '/api/report/loans/book',
   LOAN_RETURN: (id: number) => `/api/loan/${id}/return`,
 } as const;

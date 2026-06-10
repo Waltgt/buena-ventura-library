@@ -93,7 +93,16 @@ export function createLoanRepository(http: HttpClient): LoanRepository {
 
             return loansToDomain(dto.data);
         },
+        async getAuthUserLoans(signal) {
+            const dto = await http.request<ApiResponse<LoanResponseDTO[]>>({
+                url: API_ROUTES.LOAN_GET_ME,
+                method: "GET",
+                ...withUserHeader(),
+                signal,
+            });
 
+            return loansToDomain(dto.data);
+        },
         async getLoansReport(params, signal) {
 
             const query : LoanReportRequestDTO = {
@@ -114,7 +123,8 @@ export function createLoanRepository(http: HttpClient): LoanRepository {
             });
 
             return file
-        }
+        },
+
     };
 }
 

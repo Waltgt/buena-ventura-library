@@ -76,7 +76,8 @@ CREATE TABLE prestamo (
 
 INSERT INTO rol (nombre_rol, descripcion_rol) VALUES 
 ('Gestor', 'Puede agregar libros, clientes y préstamos'),
-('Administrador', 'Tiene acceso total al sistema, incluyendo gestión de usuarios y reportería');
+('Administrador', 'Tiene acceso total al sistema, incluyendo gestión de usuarios y reportería'),
+('Cliente', 'N/A');
 
 INSERT INTO estado_prestamo (codigo_estado_prestamo, descripcion_estado_prestamo) VALUES 
 ('ACT', 'Activo - Préstamo vigente'),

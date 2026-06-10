@@ -87,7 +87,20 @@ class BookService:
 
     def delete_book(self, book_id):
         try:
+            book = BookRepository.get_book_entity_by_id(book_id)
+
+            if not book:
+                raise BadRequest("El libro no existe")
+
+            has_loans = BookRepository.has_loans(book_id)
+
+            if has_loans:
+                raise BadRequest("No se puede eliminar el libro porque tiene préstamos asociados")
+
             BookRepository.delete_book(book_id)
+
+        except BadRequest:
+            raise
         except Exception as e:
             current_app.logger.error(f'Error deleting book: {str(e)}')
             raise BadRequest('Error al eliminar el libro: ' + str(e))

@@ -2,6 +2,11 @@ tags:
   - Users
 summary: Elimina un usuario por su ID
 parameters:
+  - name: X-Username
+    in: header
+    type: string
+    required: true
+    description: Usuario que realiza la petición (debe tener rol Gestor o Administrador)
   - name: user_id
     in: path
     type: integer

@@ -11,12 +11,13 @@ import LoginPage from "@/modules/auth/ui/pages/LoginPage";
 import NotFound from "@/shared/pages/NotFound";
 
 import { adminRoutes } from "@/routes/adminRoutes";
+import { userRoutes } from "@/routes/userRoutes";
 import {
   adminAccessRoles,
   userAccessRoles,
 } from "@/shared/types/auth/RolesTypes";
 
-const renderAdminRoutes = (routes: any[]) =>
+const renderRoutes = (routes: any[]) =>
   routes.flatMap((r) => {
     if (r.children) {
       return r.children.map((c: any) => {
@@ -51,6 +52,8 @@ const renderAdminRoutes = (routes: any[]) =>
     );
   });
 
+
+
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -68,7 +71,7 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        {renderAdminRoutes(adminRoutes)}
+        {renderRoutes(adminRoutes)}
       </Route>
 
       <Route
@@ -78,8 +81,9 @@ export const AppRoutes = () => {
             <UserLayout />
           </ProtectedRoute>
         }
-      />
-
+      >
+        {renderRoutes(userRoutes)}
+      </Route>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

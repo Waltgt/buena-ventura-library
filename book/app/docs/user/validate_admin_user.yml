@@ -1,6 +1,11 @@
 tags:
   - Users
 parameters:
+  - name: X-Username
+    in: header
+    type: string
+    required: true
+    description: Usuario que realiza la petición (debe tener rol Gestor o Administrador)
   - name: user_name
     in: path
     type: string

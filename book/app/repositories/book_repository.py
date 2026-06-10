@@ -1,10 +1,17 @@
 from app import db
 from app.models.book import Book
 from app.models.author import Author
+from app.models.loan import Loan
 from app.models.editorial import Editorial
 
 
 class BookRepository:
+
+    
+    @staticmethod
+    def has_loans(book_id):
+        return Loan.query.filter_by(id_book=book_id).first() is not None
+
 
     @staticmethod
     def get_all_books():

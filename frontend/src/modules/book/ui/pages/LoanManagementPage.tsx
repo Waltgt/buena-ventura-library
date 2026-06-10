@@ -32,6 +32,7 @@ import { HttpError } from "@/shared/errors/HttpError";
 import { useReturnLoan } from "../../hooks/loans/useReturnLoan";
 
 import CanAccess from "@/shared/components/permissions/CanAccess";
+import ConfirmationModal from "@/shared/components/ConfirmationModal";
 
 const PAGE_SIZE = 15;
 
@@ -98,16 +99,6 @@ const LoanManagementPage = () => {
 
 
   const actions: TableAction<Loan>[] = [
-    {
-      title: "Editar",
-      label: "Ampliar plazo",
-      color: BUTTON_COLORS.GRAY,
-      icon: faClockRotateLeft,
-      onClick: (row: any) => {
-        navigate(`/admin/loans/assign/edit/${row.id}`);
-      },
-      visible: (row: any) => row.status !== "DEV"
-    },
     {
       title: "Devolver préstamo de libro",
       label: "Devolver",
@@ -265,44 +256,17 @@ const LoanManagementPage = () => {
 
       </div>
 
-      <Modal
-        abierto={openReturn}
-        onClose={() => setOpenReturn(false)}
-        titulo="Confirmar devolución"
-      >
-        <div className="space-y-4">
-
-          <p className="text-slate-600">
-            Confirmar devolución del préstamo:
-          </p>
-
-          <div className="bg-slate-50 rounded-xl p-4">
-            <p className="font-medium">{selected?.book.title}</p>
-            <p className="text-sm text-slate-500">
-              Usuario: {selected?.user.name}
-            </p>
-          </div>
-
-          <div className="flex justify-end gap-3">
-
-            <Button
-              label="Cancelar"
-              color="gray"
-              variant="outline"
-              onClick={() => setOpenReturn(false)}
-            />
-
-            <Button
-              icon={faCheck}
-              label="Confirmar"
-              color="green"
-              onClick={confirmReturn}
-            />
-
-          </div>
-
-        </div>
-      </Modal>
+      <ConfirmationModal
+        open={openReturn}
+        loading={returnBook.isPending}
+        title="Confirmar devolución"
+        message={`Confirmar devolución del préstamo del libro "${selected?.book.title}" para el usuario ${selected?.user.name}`}
+        confirmText="Confirmar"
+        cancelText="Cancelar"
+        confirmColor="green"
+        onConfirm={confirmReturn}
+        onCancel={() => setOpenReturn(false)}
+      />
 
       <div className="fixed top-4 right-4 z-[99999]">
         <Toast

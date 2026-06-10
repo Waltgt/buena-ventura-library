@@ -33,7 +33,6 @@ export function createApiClient(baseUrl = "") {
         ...(req.headers ?? {})
       };
 
-      // Solo agregar Content-Type JSON cuando realmente es JSON
       if (
         req.body &&
         !(req.body instanceof FormData) &&
@@ -94,7 +93,6 @@ export function createApiClient(baseUrl = "") {
 
       return (await res.json()) as T;
 
-      return (await res.json()) as T;
     },
   };
 }
