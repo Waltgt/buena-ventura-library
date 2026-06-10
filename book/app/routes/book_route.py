@@ -24,7 +24,7 @@ def get_book_by_id(book_id):
 
     if row:
         data = serialize_book(row)
-
+        
         return jsonify({
             'success': True,
             'data': data,

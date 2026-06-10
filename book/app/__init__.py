@@ -12,6 +12,7 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(DevelopmentConfig)
+    app.config["JSON_AS_ASCII"] = False
     app.url_map.strict_slashes = False
 
     app.config['SWAGGER'] = {
@@ -51,6 +52,7 @@ def create_app():
         response.headers["Access-Control-Allow-Origin"] = cors_origin
         response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,X-Username"
         response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+        response.headers["Content-Type"] = "application/json; charset=utf-8"
         return response
 
     from app.routes.book_route import book_bp
