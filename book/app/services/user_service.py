@@ -32,9 +32,9 @@ class UserService:
         user = self.map_user_data_to_user(user_data)
         
         if UserRepository.exists_user_by_identification_number(user.identification_number):
-            raise BadRequest("User with this identification number already exists")
+            raise BadRequest("Ya existe un usuario con este número de identificación")
         if not self.validate_email(user.email):
-            raise BadRequest("Invalid email format")
+            raise BadRequest("Formato de correo electrónico inválido")
         
         return UserRepository.create_user(user)
         
@@ -90,7 +90,7 @@ class UserService:
     
     def validate_credential(self, user_name, valid_role):
         role = UserUtils.validate_user(user_name, valid_role)
-        return jsonify({"message": "User is valid"}), 200
+        return jsonify({"message": "Usuario válido"}), 200
     
     def validate_user_request(self, user_data, is_update=False):
         if not user_data:

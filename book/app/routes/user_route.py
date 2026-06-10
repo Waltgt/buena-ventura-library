@@ -14,7 +14,7 @@ def validate_admin_user(user_name):
         user_service = UserService()
         user = user_service.validate_credential(user_name, RolName.ADMIN.value)
         if user:
-            return jsonify({'message': 'User is valid'}), 200
+            return jsonify({'message': 'Usuario válido'}), 200
     except Exception as e:
         current_app.logger.error(f"Error validating admin user: {str(e)}")
         return jsonify({
@@ -34,13 +34,13 @@ def find_user_by_username(username):
             return jsonify({
                 'success': True,
                 'data': user_found.to_dict(),
-                'message': 'User found successfully'
+                'message': 'Usuario encontrado exitosamente'
             }), 200
         else:
             return jsonify({
                 'success': False,
                 'data': None,
-                'message': 'User not found'
+                'message': 'Usuario no encontrado'
             }), 404
     except Exception as e:
         current_app.logger.error(f"Error finding user by username: {str(e)}")
@@ -129,14 +129,14 @@ def get_all_users():
             'success': True,
             'data': users_data,
             'count': len(users_data),
-            'message': 'Users retrieved successfully'
+            'message': 'Usuarios obtenidos exitosamente'
         }), 200
         
     except Exception as e:
         return jsonify({
             'success': False,
             'error': str(e),
-            'message': 'Error retrieving users'
+            'message': 'Error al obtener usuarios'
         }), 500
         
 

@@ -39,7 +39,7 @@ class LoanService:
             raise
         except Exception as e:
             current_app.logger.error(f'Error al crear prestamo: {str(e)}')
-            raise BadRequest('Loan creation failed: ' + str(e))
+            raise BadRequest('Error al crear el préstamo: ' + str(e))
 
     def return_loan(self, loan_id):
         try:
@@ -56,7 +56,7 @@ class LoanService:
             raise
         except Exception as e:
             current_app.logger.error(f'Error al devolver prestamo: {str(e)}')
-            raise BadRequest('Loan return failed: ' + str(e))
+            raise BadRequest('Error al devolver el préstamo: ' + str(e))
 
     def map_loan_from_request(self, loan_data):
         delivery_raw = loan_data.get('delivery_date')
