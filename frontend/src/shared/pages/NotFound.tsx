@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import { getHomeRoute } from "@/modules/auth/ui/utils/getHomeRoute";
 import { useAuthStore } from "@/modules/auth/store/authStore";
+import type { Role } from "../types/auth/RolesTypes";
 
 export default function NotFound() {
     const user = useAuthStore((s) => s.user);
@@ -23,7 +24,7 @@ export default function NotFound() {
                 </p>
 
                 <Link
-                    to={user ? getHomeRoute(["admin"]) : "/login"}
+                    to={user ? getHomeRoute(user.role.name as Role) : "/login"}
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition"
                 >
                     Volver al inicio

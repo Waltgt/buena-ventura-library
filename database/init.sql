@@ -1,4 +1,12 @@
-CREATE DATABASE IF NOT EXISTS biblioteca_buenaventura;
+SET NAMES utf8mb4;
+SET character_set_client = utf8mb4;
+SET character_set_connection = utf8mb4;
+SET character_set_results = utf8mb4;
+
+CREATE DATABASE IF NOT EXISTS biblioteca_buenaventura
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+
 USE biblioteca_buenaventura;
 
 CREATE TABLE estado_prestamo (
@@ -19,7 +27,6 @@ CREATE TABLE editorial (
     nombre_editorial VARCHAR(250) NOT NULL,
     PRIMARY KEY (id_editorial)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 CREATE TABLE libro (
     id_libro BIGINT NOT NULL AUTO_INCREMENT,
@@ -56,7 +63,6 @@ CREATE TABLE usuario (
     FOREIGN KEY (id_rol) REFERENCES rol(id_rol) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE prestamo (
     id_prestamo BIGINT NOT NULL AUTO_INCREMENT,
     id_libro BIGINT NOT NULL,
@@ -73,34 +79,21 @@ CREATE TABLE prestamo (
     FOREIGN KEY (id_usuario_registro_prestamo) REFERENCES usuario(id_usuario) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 INSERT INTO rol (nombre_rol, descripcion_rol) VALUES 
 ('Gestor', 'Puede agregar libros, clientes y préstamos'),
-('Administrador', 'Tiene acceso total al sistema, incluyendo gestión de usuarios y reportería');
+('Administrador', 'Tiene acceso total al sistema, incluyendo gestión de usuarios y reportería'),
+('Cliente', 'N/A');
 
 INSERT INTO estado_prestamo (codigo_estado_prestamo, descripcion_estado_prestamo) VALUES 
 ('ACT', 'Activo - Préstamo vigente'),
 ('DEV', 'Devuelto - Libro regresado a la biblioteca'),
 ('VENC', 'Vencido - Fecha de devolución excedida');
 
-
 INSERT INTO usuario (
-    nombre_usuario, 
-    contrasena, 
-    nombre_cliente, 
-    apellido_cliente, 
-    correo, 
-    telefono, 
-    numero_identificacion, 
-    id_rol
+    nombre_usuario, contrasena, nombre_cliente, apellido_cliente, correo, telefono, numero_identificacion, id_rol
 ) VALUES (
-    'admin',
-    'admin123', 
-    'Administrador',
-    'Del Sistema',
-    'admin@biblioteca.com',
-    '12345678',
-    'ADMIN-001',
+    'admin','admin123','Administrador','Del Sistema',
+    'admin@biblioteca.com','12345678','ADMIN-001',
     (SELECT id_rol FROM rol WHERE nombre_rol = 'Administrador')
 );
 
@@ -119,138 +112,27 @@ INSERT INTO editorial (nombre_editorial) VALUES
 ('Editorial Sudamericana');
 
 INSERT INTO libro (isbn, titulo, id_autor, id_editorial, fecha_publicacion, cantidad_disponible) VALUES 
-('9788437604947', 'Cien años de soledad', 1, 1, '1967-05-30', 10),
-('9788408054058', 'La casa de los espíritus', 2, 2, '1982-01-01', 8),
-('9788420422138', 'Ficciones', 3, 3, '1944-01-01', 5),
-('9788437607191', 'Rayuela', 4, 1, '1963-06-28', 7),
-('9788466321136', 'La ciudad y los perros', 5, 2, '1963-01-01', 6);
+('9788437604947','Cien años de soledad',1,1,'1967-05-30',10),
+('9788408054058','La casa de los espíritus',2,2,'1982-01-01',8),
+('9788420422138','Ficciones',3,3,'1944-01-01',5),
+('9788437607191','Rayuela',4,1,'1963-06-28',7),
+('9788466321136','La ciudad y los perros',5,2,'1963-01-01',6);
 
 INSERT INTO usuario (
-    nombre_usuario, 
-    contrasena, 
-    nombre_cliente, 
-    apellido_cliente, 
-    correo, 
-    telefono, 
-    numero_identificacion, 
-    id_rol
+    nombre_usuario, contrasena, nombre_cliente, apellido_cliente, correo, telefono, numero_identificacion, id_rol
 ) VALUES 
-(
-    'jperez',
-    'user123',
-    'Juan',
-    'Pérez',
-    'juan.perez@email.com',
-    '55510001',
-    'ID-1001',
-    (SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')
-),
-(
-    'mgarcia',
-    'user123',
-    'María',
-    'García',
-    'maria.garcia@email.com',
-    '55510002',
-    'ID-1002',
-    (SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')
-),
-(
-    'crodriguez',
-    'user123',
-    'Carlos',
-    'Rodríguez',
-    'carlos.rodriguez@email.com',
-    '55510003',
-    'ID-1003',
-    (SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')
-),
-(
-    'lfernandez',
-    'user123',
-    'Laura',
-    'Fernández',
-    'laura.fernandez@email.com',
-    '55510004',
-    'ID-1004',
-    (SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')
-),
-(
-    'atorres',
-    'user123',
-    'Ana',
-    'Torres',
-    'ana.torres@email.com',
-    '55510005',
-    'ID-1005',
-    (SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')
-);
-
+('jperez','user123','Juan','Pérez','juan.perez@email.com','55510001','ID-1001',(SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')),
+('mgarcia','user123','María','García','maria.garcia@email.com','55510002','ID-1002',(SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')),
+('crodriguez','user123','Carlos','Rodríguez','carlos.rodriguez@email.com','55510003','ID-1003',(SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')),
+('lfernandez','user123','Laura','Fernández','laura.fernandez@email.com','55510004','ID-1004',(SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor')),
+('atorres','user123','Ana','Torres','ana.torres@email.com','55510005','ID-1005',(SELECT id_rol FROM rol WHERE nombre_rol = 'Gestor'));
 
 INSERT INTO prestamo (
-    id_libro,
-    id_usuario_prestamo,
-    fecha_entrega,
-    fecha_devolucion_esperada,
-    fecha_devolucion_real,
-    id_estado_prestamo,
-    id_usuario_registro_prestamo
+    id_libro, id_usuario_prestamo, fecha_entrega, fecha_devolucion_esperada,
+    fecha_devolucion_real, id_estado_prestamo, id_usuario_registro_prestamo
 ) VALUES 
-(
-    1,  -- Cien años de soledad
-    2,  -- Juan Pérez
-    '2024-06-01 10:30:00',
-    '2024-06-15 23:59:59',
-    NULL,
-    (SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo = 'ACT'),
-    1   -- admin
-),
-(
-    2,  -- La casa de los espíritus
-    3,  -- María García
-    '2024-06-02 11:15:00',
-    '2024-06-16 23:59:59',
-    '2024-06-14 09:45:00',
-    (SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo = 'DEV'),
-    1
-),
-(
-    3,  -- Ficciones
-    4,  -- Carlos Rodríguez
-    '2024-05-20 09:00:00',
-    '2024-06-03 23:59:59',
-    NULL,
-    (SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo = 'VENC'),
-    1
-),
-(
-    4,  -- Rayuela
-    5,  -- Laura Fernández
-    '2024-06-05 14:30:00',
-    '2024-06-19 23:59:59',
-    NULL,
-    (SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo = 'ACT'),
-    1
-),
-(
-    5,  -- La ciudad y los perros
-    2,  -- Juan Pérez
-    '2024-05-28 16:45:00',
-    '2024-06-11 23:59:59',
-    '2024-06-10 10:30:00',
-    (SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo = 'DEV'),
-    1
-);
-
-
-SELECT * FROM usuario;
-SELECT * FROM libro;
-
-
-select * from rol;
-
-
-SELECT * FROM estado_prestamo;
-
-
-
+(1,2,'2024-06-01 10:30:00','2024-06-15 23:59:59',NULL,(SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo='ACT'),1),
+(2,3,'2024-06-02 11:15:00','2024-06-16 23:59:59','2024-06-14 09:45:00',(SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo='DEV'),1),
+(3,4,'2024-05-20 09:00:00','2024-06-03 23:59:59',NULL,(SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo='VENC'),1),
+(4,5,'2024-06-05 14:30:00','2024-06-19 23:59:59',NULL,(SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo='ACT'),1),
+(5,2,'2024-05-28 16:45:00','2024-06-11 23:59:59','2024-06-10 10:30:00',(SELECT id_estado_prestamo FROM estado_prestamo WHERE codigo_estado_prestamo='DEV'),1);

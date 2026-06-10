@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "@/modules/auth/store/authStore";
 import { getHomeRoute } from "@/modules/auth/ui/utils/getHomeRoute";
+import type { Role } from "@/shared/types/auth/RolesTypes";
 
 export const PublicRoute = () => {
     const user = useAuthStore((state) => state.user);
@@ -10,9 +11,8 @@ export const PublicRoute = () => {
         return <div>Cargando...</div>;
     }
 
-    // si ya está logeado redirige
     if (user) {
-        return <Navigate to={getHomeRoute(user.roles)} replace />;
+        return <Navigate to={getHomeRoute(user.role.name as Role)} replace />;
     }
 
     return <Outlet />;

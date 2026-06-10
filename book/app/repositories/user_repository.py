@@ -1,9 +1,16 @@
 from app import db
 from app.models.user import User
+from app.models.loan import Loan
 
 
 class UserRepository:
-    
+    @staticmethod
+    def has_loans(user_id):
+        return db.session.query(Loan).filter(
+                (Loan.id_user_loan == user_id) |
+                (Loan.id_user_register == user_id)
+            ).first() is not None
+
     @staticmethod
     def get_user_by_id(user_id):
         try:

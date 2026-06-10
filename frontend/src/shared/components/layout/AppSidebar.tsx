@@ -85,7 +85,6 @@ const AppSidebar = ({
           </button>
         </div>
 
-        {/* nav */}
         <nav className="flex-1 p-4 space-y-2 overflow-auto">
           {routes.map((route) => {
 
@@ -124,7 +123,6 @@ const AppSidebar = ({
           })}
         </nav>
 
-        {/* footer */}
         <div className="p-4 border-t border-slate-800">
           <button
             onClick={logout}

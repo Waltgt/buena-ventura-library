@@ -33,7 +33,6 @@ export function createApiClient(baseUrl = "") {
         ...(req.headers ?? {})
       };
 
-      // Solo agregar Content-Type JSON cuando realmente es JSON
       if (
         req.body &&
         !(req.body instanceof FormData) &&
@@ -91,10 +90,9 @@ export function createApiClient(baseUrl = "") {
       if (!contentType.includes("application/json")) {
         throw new HttpError(res.status, "Expected JSON response");
       }
-
+      
       return (await res.json()) as T;
 
-      return (await res.json()) as T;
     },
   };
 }

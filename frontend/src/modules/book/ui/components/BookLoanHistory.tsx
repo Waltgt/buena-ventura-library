@@ -106,7 +106,6 @@ const BookLoanHistoryCards = ({ bookId }: Props) => {
           <div
             key={loan.id}
             className="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer"
-            onClick={() => navigate(`/admin/loans/detail/${loan.id}`)}
           >
             <div className="flex flex-col">
               <span className="text-sm font-medium text-slate-800">

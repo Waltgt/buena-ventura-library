@@ -21,7 +21,7 @@ export const ProtectedRoute = ({
   if (!user) return <Navigate to="/login" replace />;
 
   const userRole = user.role?.name as Role;
-
+  
   if (allowedRoles?.length) {
     const hasRole = allowedRoles.includes(userRole);
     if (!hasRole) return <Navigate to="/unauthorized" replace />;

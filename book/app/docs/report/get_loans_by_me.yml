@@ -1,0 +1,103 @@
+tags:
+  - Reports
+
+summary: Obtener préstamos del usuario autenticado
+
+description: >
+  Solo usuarios con rol Cliente. Requiere el header X-Username.
+  Retorna los préstamos del usuario autenticado sin necesidad de enviar su ID.
+
+parameters:
+  - name: X-Username
+    in: header
+    type: string
+    required: true
+    description: Usuario autenticado que realiza la petición
+
+  - name: format
+    in: query
+    type: string
+    required: false
+    enum: [json, csv]
+    description: >
+      Si se envía `csv`, el endpoint retornará el archivo en formato CSV.
+
+responses:
+  200:
+    description: Préstamos del usuario obtenidos correctamente
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id_loan:
+                type: integer
+              id_book:
+                type: integer
+              book_title:
+                type: string
+              isbn:
+                type: string
+              name_editorial:
+                type: string
+              author_name:
+                type: string
+              user_loan_name:
+                type: string
+              delivery_date:
+                type: string
+              expected_return_date:
+                type: string
+              real_return_date:
+                type: string
+                nullable: true
+              status_code:
+                type: string
+        count:
+          type: integer
+        message:
+          type: string
+
+  401:
+    description: Usuario no autenticado
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+
+  403:
+    description: El usuario no tiene permisos
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+
+  500:
+    description: Error interno del servidor
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        error_type:
+          type: string

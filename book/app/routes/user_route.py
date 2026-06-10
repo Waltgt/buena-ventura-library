@@ -8,13 +8,14 @@ from flasgger import swag_from
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 
 @user_bp.route('/<user_name>', methods=['GET'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/validate_admin_user.yml')
 def validate_admin_user(user_name):
     try:
         user_service = UserService()
         user = user_service.validate_credential(user_name, RolName.ADMIN.value)
         if user:
-            return jsonify({'message': 'User is valid'}), 200
+            return jsonify({'message': 'Usuario válido'}), 200
     except Exception as e:
         current_app.logger.error(f"Error validating admin user: {str(e)}")
         return jsonify({
@@ -25,6 +26,7 @@ def validate_admin_user(user_name):
         }), 500
 
 @user_bp.route('/findByUsername/<username>', methods=['GET'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/find_user_by_username.yml')
 def find_user_by_username(username):
     try:
@@ -34,13 +36,13 @@ def find_user_by_username(username):
             return jsonify({
                 'success': True,
                 'data': user_found.to_dict(),
-                'message': 'User found successfully'
+                'message': 'Usuario encontrado exitosamente'
             }), 200
         else:
             return jsonify({
                 'success': False,
                 'data': None,
-                'message': 'User not found'
+                'message': 'Usuario no encontrado'
             }), 404
     except Exception as e:
         current_app.logger.error(f"Error finding user by username: {str(e)}")
@@ -52,7 +54,7 @@ def find_user_by_username(username):
         }), 500
         
 @user_bp.route('/', methods=['POST'])
-# @roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/create_user.yml')
 def create_user():
     try:
@@ -116,6 +118,7 @@ def update_user():
         }), 500
 
 @user_bp.route('/', methods=['GET'])
+@roles_required(RolName.GESTOR.value, RolName.ADMIN.value)
 @swag_from('../docs/user/get_all_users.yml')
 def get_all_users():
     try:
@@ -129,14 +132,14 @@ def get_all_users():
             'success': True,
             'data': users_data,
             'count': len(users_data),
-            'message': 'Users retrieved successfully'
+            'message': 'Usuarios obtenidos exitosamente'
         }), 200
         
     except Exception as e:
         return jsonify({
             'success': False,
             'error': str(e),
-            'message': 'Error retrieving users'
+            'message': 'Error al obtener usuarios'
         }), 500
         
 

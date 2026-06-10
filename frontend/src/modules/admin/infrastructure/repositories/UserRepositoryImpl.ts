@@ -25,6 +25,7 @@ export function createUserRepository(http: HttpClient): UserRepository {
             const dto = await http.request<ApiResponse<UserResponseDTO[]>>({
                 url: API_ROUTES.USER_ENDPOINT,
                 method: "GET",
+                ...withUserHeader(),
                 signal,
             });
 
@@ -34,6 +35,7 @@ export function createUserRepository(http: HttpClient): UserRepository {
             const dto = await http.request<ApiResponse<UserResponseDTO>>({
                 url: `${API_ROUTES.USER_ENDPOINT}/${id}`,
                 method: "GET",
+                ...withUserHeader(),
                 signal,
             });
 
@@ -87,6 +89,19 @@ export function createUserRepository(http: HttpClient): UserRepository {
             });
 
             return userToDomain(dto.data)
+        },
+        async revokeUser(id, signal) {
+
+            const dto = await http.request<ApiResponse<UserResponseDTO>>({
+                url: `${API_ROUTES.USER_ENDPOINT}/${id}`,
+                method: "DELETE",
+                ...withUserHeader(),
+                withCredentials: false,
+                timeoutMs: 15_000,
+                signal,
+            });
+
+            return dto.success
         },
     };
 }

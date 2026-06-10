@@ -24,19 +24,19 @@ def get_book_by_id(book_id):
 
     if row:
         data = serialize_book(row)
-
+        
         return jsonify({
             'success': True,
             'data': data,
             'count': 1,
-            'message': 'Book retrieved successfully'
+            'message': 'Libro encontrado exitosamente'
         }), 200
     else:
         return jsonify({
             'success': True,
             'data': [],
             'count': 0,
-            'message': 'No book found with the given ID: ' + str(book_id)
+            'message': 'No se encontró un libro con el ID: ' + str(book_id)
         }), 200
 
 
@@ -51,7 +51,7 @@ def get_all_books():
             'success': True,
             'data': [],
             'count': 0,
-            'message': 'No books found'
+            'message': 'No se encontraron libros'
         }), 200
 
     books_data = [serialize_book(row) for row in books]
@@ -60,7 +60,7 @@ def get_all_books():
         'success': True,
         'data': books_data,
         'count': len(books_data),
-        'message': 'Books retrieved successfully'
+        'message': 'Libros obtenidos exitosamente'
     }), 200
 
 
@@ -79,7 +79,7 @@ def create_book():
         return jsonify({
             'success': True,
             'data': data,
-            'message': 'Book created successfully'
+            'message': 'Libro creado exitosamente'
         }), 201
 
     except BadRequest as e:
@@ -115,7 +115,7 @@ def update_book():
         return jsonify({
             'success': True,
             'data': data,
-            'message': 'Book updated successfully'
+            'message': 'Libro actualizado exitosamente'
         }), 200
 
     except BadRequest as e:
@@ -146,7 +146,7 @@ def delete_book(book_id):
 
         return jsonify({
             'success': True,
-            'message': 'Book deleted successfully'
+            'message': 'Libro eliminado exitosamente'
         }), 200
 
     except BadRequest as e:

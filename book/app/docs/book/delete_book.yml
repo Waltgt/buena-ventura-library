@@ -1,28 +1,55 @@
 tags:
   - Books
+
 summary: Elimina un libro
+
+description: Solo usuarios con rol Gestor o Administrador. Requiere el header X-Username.
+
 parameters:
   - name: X-Username
     in: header
     type: string
     required: true
+    description: Usuario que realiza la petición
+
   - name: book_id
     in: path
     type: integer
     required: true
+    description: ID del libro a eliminar
+
 responses:
   200:
-    description: Eliminado
+    description: Libro eliminado exitosamente
     schema:
       type: object
       properties:
         success:
           type: boolean
+          example: true
         message:
           type: string
+          example: Libro eliminado exitosamente
+
+  400:
+    description: El libro no existe o tiene préstamos asociados
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        error_type:
+          type: string
+
   401:
     $ref: "#/responses/Unauthorized"
+
   403:
     $ref: "#/responses/Forbidden"
+
   500:
     $ref: "#/responses/InternalError"
